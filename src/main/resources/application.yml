@@ -1,0 +1,16 @@
+server:
+  port: 8787
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=public
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+bot:
+  name: ${NAME:name}
+  token: ${TOKEN:token}
+  uri: ${URI:uri}
+
