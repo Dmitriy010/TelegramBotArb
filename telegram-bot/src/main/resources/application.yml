@@ -1,0 +1,13 @@
+server:
+  port: 8787
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: lds
+    password: lds1488
+bot:
+  name: ${NAME:name}
+  token: ${TOKEN:token}
+  uri: ${URI:uri}
+

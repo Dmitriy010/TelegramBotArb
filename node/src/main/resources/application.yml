@@ -1,0 +1,16 @@
+server:
+  port: 8686
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: lds
+    password: lds1488
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/telegram?currentSchema=public
+    username: lds
+    password: lds1488
+  jpa:
+    hibernate:
+      ddl-auto: validate
