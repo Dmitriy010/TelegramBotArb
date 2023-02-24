@@ -1,14 +1,18 @@
 package ru.node.clients.response.binance;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import ru.node.enums.Exchange;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+import static ru.node.constants.Constants.ZONE_ID;
 
 @Data
 public class BinanceData {
 
     private Adv adv;
     private Advertiser advertiser;
+    private LocalDateTime date = LocalDateTime.now(ZoneId.of(ZONE_ID));
+    private String exchange = Exchange.BINANCE.getName();
 }

@@ -1,14 +1,16 @@
-package ru.lds.telegram.enums;
+package ru.node.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum TradeType {
+public enum Exchange {
 
-    BUY("Продать"),
-    SELL("Купить");
+    BINANCE("Binance"),
+    HUOBI("Huobi"),
+    ANY("Любая");
+
 
     private final String name;
 }

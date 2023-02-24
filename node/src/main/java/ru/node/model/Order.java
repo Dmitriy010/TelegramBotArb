@@ -4,11 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -16,7 +19,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-public class BinanceOrder {
+@Table(name = "orders")
+@ToString
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,11 +46,15 @@ public class BinanceOrder {
 
     private Double successOrdersPercent;
 
+    private String exchange;
+
+    private LocalDateTime date;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BinanceOrder that = (BinanceOrder) o;
+        Order that = (Order) o;
         return Objects.equals(tradeType, that.tradeType) && Objects.equals(asset, that.asset) && Objects.equals(fiat, that.fiat) && Objects.equals(price, that.price) && Objects.equals(userName, that.userName);
     }
 

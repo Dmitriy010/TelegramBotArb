@@ -5,10 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum TradeType {
+public enum Asset {
 
-    BUY("Продать"),
-    SELL("Купить");
-
-    private final String name;
+    USDT,
+    BTC,
+    ETH
 }

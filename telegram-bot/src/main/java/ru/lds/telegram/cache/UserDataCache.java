@@ -1,6 +1,7 @@
 package ru.lds.telegram.cache;
 
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import ru.lds.telegram.enums.BotState;
 
@@ -12,7 +13,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserDataCache implements DataCache {
     private final Map<Long, BotState> usersBotStates = new HashMap<>();
-    private final Map<Long, StringBuilder> usersMessage = new HashMap<>();
+    private final Map<Long, JSONObject> usersMessage = new HashMap<>();
 
     @Override
     public void setUsersCurrentBotState(long userId, BotState botState) {
@@ -20,13 +21,13 @@ public class UserDataCache implements DataCache {
     }
 
     @Override
-    public String setUsersMessage(long userId, String message) {
+    public JSONObject addToUsersMessage(long userId, String key, String value) {
         if (Objects.isNull(usersMessage.get(userId))) {
-            usersMessage.put(userId, new StringBuilder().append(message).append(" "));
+            usersMessage.put(userId, new JSONObject().put(key, value));
         } else {
-            usersMessage.put(userId, usersMessage.get(userId).append(message).append(" "));
+            usersMessage.put(userId, usersMessage.get(userId).put(key, value));
         }
-        return usersMessage.get(userId).toString();
+        return usersMessage.get(userId);
     }
 
     @Override

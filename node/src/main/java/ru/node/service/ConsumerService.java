@@ -1,7 +1,13 @@
 package ru.node.service;
 
-import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.node.dto.OrderInfoDto;
+import ru.node.dto.OrderSubscribeDto;
+import ru.node.dto.SubscribeActionDto;
 
 public interface ConsumerService {
-    void consumeTextMessageUpdates(Update update);
+    void consumeTextMessageUpdates(OrderInfoDto jsonObject);
+
+    void consumeTextMessageSubscribe(OrderSubscribeDto orderSubscribeDto);
+
+    void consumeTextActionSubscribe(SubscribeActionDto subscribeActionDto);
 }

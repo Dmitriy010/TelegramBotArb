@@ -1,8 +1,11 @@
 package ru.lds.telegram.service;
 
-import org.telegram.telegrambots.meta.api.objects.Update;
+import ru.lds.telegram.dto.OrderInfoDto;
+import ru.lds.telegram.dto.SubscribeActionDto;
 
 public interface UpdateProducer {
 
-    void produce(String rabbitQueue, Update update);
+    void produce(String rabbitQueue, OrderInfoDto orderInfoDto);
+
+    void produceSubscribeAction(String rabbitQueue, SubscribeActionDto subscribeActionDto);
 }

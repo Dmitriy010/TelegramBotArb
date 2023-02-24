@@ -1,6 +1,5 @@
 package ru.lds.telegram.config;
 
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -11,15 +10,5 @@ public class RabbitConfiguration {
     @Bean
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
-    public Queue textMessageQueue() {
-        return new Queue("text_message_update");
-    }
-
-    @Bean
-    public Queue textAnswerMessageQueue() {
-        return new Queue("answer_message");
     }
 }

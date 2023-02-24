@@ -8,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 public enum PaymentSystem {
 
     TINKOFF("Tinkoff"),
-    ROSBANK("RosBank"),
-    RAIFFEISENBANK("Raiffeisenbank"),
-    PAYEER("Payeer");
+    ROSBANK("SberBank"),
+    RAIFFEISENBANK("RaiffeisenBank"),
+    PAYEER("Payeer"),
+    QIWI("Qiwi"),
+    ANY("Любая");
 
     private final String name;
 }

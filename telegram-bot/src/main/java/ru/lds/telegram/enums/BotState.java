@@ -3,6 +3,15 @@ package ru.lds.telegram.enums;
 public enum BotState {
     START,
     PAYMENT_SYSTEM,
+    ASSET,
+    EXCHANGE,
     CHECK_COST,
+    SUBSCRIBE_COST,
+    SUBSCRIBES,
+    START_DELETE_SUBSCRIBE,
+    DELETE_SUBSCRIBE,
+    CHECK_BEST_EXCHANGE,
+    CHECK_BEST_ASSET,
+    PRICE,
     TRADE_TYPE
 }
