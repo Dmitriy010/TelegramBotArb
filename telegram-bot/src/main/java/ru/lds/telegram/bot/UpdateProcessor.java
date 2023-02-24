@@ -17,7 +17,7 @@ import ru.lds.telegram.enums.BotState;
 import ru.lds.telegram.enums.Exchange;
 import ru.lds.telegram.enums.PaymentSystem;
 import ru.lds.telegram.enums.TradeType;
-import ru.lds.telegram.service.UpdateProducer;
+import ru.lds.telegram.service.ProducerService;
 
 import java.util.Objects;
 
@@ -29,7 +29,7 @@ public class UpdateProcessor {
     private final DataCache dataCache;
     private final TelegramBot telegramBot;
     private final TelegramButton telegramButton;
-    private final UpdateProducer updateProducer;
+    private final ProducerService producerService;
 
     public void processUpdate(Update update) {
         if (update == null) {
@@ -80,7 +80,7 @@ public class UpdateProcessor {
                             log.error(e.getMessage(), e);
                         }
                         if (Objects.nonNull(orderSubscribeDto)) {
-                            updateProducer.produce("text_message_subscribe", orderSubscribeDto);
+                            producerService.produce("text_message_subscribe", orderSubscribeDto);
                         } else {
                             telegramBot.sendAnswerMessage(new SendMessage(userId.toString(), "Произошла внутренняя ошибка!"));
                         }
@@ -99,7 +99,7 @@ public class UpdateProcessor {
                     dataCache.setUsersCurrentBotState(userId, BotState.ASSET);
                 }
                 case SUBSCRIBES -> {
-                    updateProducer.produceSubscribeAction("text_action_subscribe",
+                    producerService.produceSubscribeAction("text_action_subscribe",
                             SubscribeActionDto.builder()
                                     .action("findAll")
                                     .userId(userId)
@@ -116,7 +116,7 @@ public class UpdateProcessor {
                 case DELETE_SUBSCRIBE -> {
                     try {
                         var subscribeId = Long.parseLong(update.getMessage().getText());
-                        updateProducer.produceSubscribeAction("text_action_subscribe",
+                        producerService.produceSubscribeAction("text_action_subscribe",
                                 SubscribeActionDto.builder()
                                         .action("delete")
                                         .subscribeId(subscribeId)
@@ -173,7 +173,7 @@ public class UpdateProcessor {
                             log.error(ex.getMessage(), ex);
                         }
                         if (Objects.nonNull(orderInfoDto)) {
-                            updateProducer.produce("text_message_update", orderInfoDto);
+                            producerService.produce("text_message_update", orderInfoDto);
                         } else {
                             telegramBot.sendAnswerMessage(new SendMessage(userId.toString(), "Произошла внутренняя ошибка!"));
                         }

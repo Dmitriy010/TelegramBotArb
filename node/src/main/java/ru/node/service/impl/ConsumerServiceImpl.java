@@ -9,6 +9,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.node.dto.OrderInfoDto;
 import ru.node.dto.OrderSubscribeDto;
 import ru.node.dto.SubscribeActionDto;
+import ru.node.enums.SubscribeAction;
+import ru.node.enums.TradeType;
 import ru.node.model.Order;
 import ru.node.model.OrderSubscribe;
 import ru.node.repository.specification.OrderSpecification;
@@ -37,7 +39,8 @@ public class ConsumerServiceImpl implements ConsumerService {
                 orderInfoDto.getExchange(),
                 orderInfoDto.getPaymentSystem()));
         if (!orderList.isEmpty()) {
-            producerService.producerAnswerSubscribe(new SendMessage(orderInfoDto.getUserId().toString(), getTextOrder(orderList.get(0))));
+            orderList.forEach(order ->
+                    producerService.producerAnswerSubscribe(new SendMessage(orderInfoDto.getUserId().toString(), getTextOrder(order))));
         } else {
             producerService.producerAnswerSubscribe(new SendMessage(orderInfoDto.getUserId().toString(), "Нет данных"));
         }
@@ -54,7 +57,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     @Override
     @RabbitListener(queues = "text_action_subscribe")
     public void consumeTextActionSubscribe(SubscribeActionDto subscribeActionDto) {
-        if (subscribeActionDto.getAction().equals("findAll")) {
+        if (SubscribeAction.FIND_ALL.getName().equals(subscribeActionDto.getAction())) {
             var orderSubscribes = orderSubscribeService.findAllByUserId(subscribeActionDto.getUserId());
             if (orderSubscribes.isEmpty()) {
                 producerService.producerAnswerActionSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(), "Подписок нет"));
@@ -63,7 +66,7 @@ public class ConsumerServiceImpl implements ConsumerService {
                         producerService.producerAnswerActionSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
                                 getTextOrderSubscribeForUser(orderSubscribe))));
             }
-        } else if (subscribeActionDto.getAction().equals("delete")) {
+        } else if (SubscribeAction.DELETE.getName().equals(subscribeActionDto.getAction())) {
             var result = orderSubscribeService.deleteById(subscribeActionDto.getSubscribeId());
             if (Boolean.TRUE.equals(result)) {
                 producerService.producerAnswerActionSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
@@ -76,7 +79,8 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     private String getTextOrderSubscribeForUser(OrderSubscribe orderSubscribe) {
-        var tradeType = orderSubscribe.getTradeType().equals("SELL") ? "Купить" : "Продать";
+        var tradeType = orderSubscribe.getTradeType().equals(TradeType.SELL.name()) ?
+                TradeType.SELL.getName() : TradeType.BUY.getName();
         return EmojiParser.parseToUnicode("📋📋📋") +
                 "Подписка" +
                 EmojiParser.parseToUnicode("📋📋📋") +

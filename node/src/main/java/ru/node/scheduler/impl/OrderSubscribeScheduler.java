@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import ru.node.enums.TradeType;
 import ru.node.model.Order;
 import ru.node.repository.specification.OrderSpecification;
 import ru.node.service.OrderService;
@@ -34,15 +35,15 @@ public class OrderSubscribeScheduler {
                     orderSubscribe.getPaymentSystem(),
                     orderSubscribe.getPrice()));
             if (!orderList.isEmpty()) {
-                var sendMessage = new SendMessage(orderSubscribe.getUserId().toString(), getTextOrder(orderList.get(0)));
-                producerService.producerAnswerSubscribe(sendMessage);
+                producerService.producerAnswerSubscribe(new SendMessage(orderSubscribe.getUserId().toString(), getTextOrder(orderList.get(0))));
                 orderSubscribeService.deleteById(orderSubscribe.getId());
             }
         });
     }
 
     private String getTextOrder(Order order) {
-        var tradeType = order.getTradeType().equals("SELL") ? "Купить" : "Продать";
+        var tradeType = order.getTradeType().equals(TradeType.SELL.name()) ?
+                TradeType.SELL.getName() : TradeType.BUY.getName();
         return EmojiParser.parseToUnicode("🚀🚀🚀") +
                 "Цена достигнута" +
                 EmojiParser.parseToUnicode("🚀🚀🚀") +

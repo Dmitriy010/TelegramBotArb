@@ -2,7 +2,7 @@ package ru.lds.telegram.service;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-public interface AnswerConsumer {
+public interface ConsumerService {
 
     void consume(SendMessage sendMessage);
 

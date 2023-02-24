@@ -6,12 +6,12 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import ru.lds.telegram.dto.OrderInfoDto;
 import ru.lds.telegram.dto.SubscribeActionDto;
-import ru.lds.telegram.service.UpdateProducer;
+import ru.lds.telegram.service.ProducerService;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UpdateProducerImpl implements UpdateProducer {
+public class ProducerServiceImpl implements ProducerService {
 
     private final RabbitTemplate rabbitTemplate;
 

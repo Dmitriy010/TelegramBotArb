@@ -39,7 +39,10 @@ public class OrderServiceImpl implements OrderService {
         var response = binanceServiceClient.getOrders(binanceBody);
 
         var responseBody = response.getBody();
-        if (Objects.nonNull(responseBody) && !responseBody.getData().isEmpty()) {
+        if (Objects.nonNull(responseBody) &&
+            Objects.nonNull(responseBody.getData()) &&
+            !responseBody.getData().isEmpty()) {
+
             var binanceData = responseBody.getData().get(0);
             var tradeMethodsList = binanceData.getAdv().getTradeMethods().stream()
                     .filter(tradeM -> tradeM.getIdentifier().equals(binanceBody.getPayTypes().get(0)))
@@ -74,7 +77,10 @@ public class OrderServiceImpl implements OrderService {
 
         var responseBody = huobiServiceClient.getOrders(mapParameters).getBody();
 
-        if (Objects.nonNull(responseBody) && !responseBody.getData().isEmpty()) {
+        if (Objects.nonNull(responseBody) &&
+            Objects.nonNull(responseBody.getData()) &&
+            !responseBody.getData().isEmpty()) {
+
             var huobiData = responseBody.getData().get(0);
             var tradeMethodsList = huobiData.getPayMethods().stream()
                     .filter(tradeM -> tradeM.getPayMethodId().toString().equals(payMethod.getNameHuobi()))
