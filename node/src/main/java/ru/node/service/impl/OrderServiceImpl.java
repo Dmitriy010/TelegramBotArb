@@ -16,6 +16,8 @@ import ru.node.model.Order;
 import ru.node.repository.OrderRepository;
 import ru.node.service.OrderService;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static ru.node.constants.Constants.BALANCE;
 import static ru.node.constants.Constants.FIAT_RUB;
+import static ru.node.constants.Constants.ZONE_ID;
 
 @Component
 @RequiredArgsConstructor
@@ -93,6 +96,12 @@ public class OrderServiceImpl implements OrderService {
             huobiOrder.setTradeMethod(payMethod.getName());
             merge(huobiOrder);
         }
+    }
+
+    @Override
+    @Transactional
+    public void deleteOldOrders() {
+        orderRepository.deleteAllByDateIsLessThan(LocalDateTime.now(ZoneId.of(ZONE_ID)).minusMinutes(5));
     }
 
     @Override

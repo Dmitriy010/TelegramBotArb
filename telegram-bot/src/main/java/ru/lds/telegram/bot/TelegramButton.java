@@ -115,20 +115,22 @@ public class TelegramButton {
     }
 
     public ReplyKeyboardMarkup getMenu() {
-        var keyboardMarkup = new ReplyKeyboardMarkup();
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
         var rowFirst = new KeyboardRow();
         rowFirst.add("Узнать цену " + EmojiParser.parseToUnicode("💵"));
         rowFirst.add("Подписаться на цену " + EmojiParser.parseToUnicode("⏰"));
-        var rowSecond = new KeyboardRow();
 
+        var rowSecond = new KeyboardRow();
         rowSecond.add("Мои подписки " + EmojiParser.parseToUnicode("📋"));
         rowSecond.add("Удалить подписку " + EmojiParser.parseToUnicode("❌"));
+
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
         keyboardRows.add(rowFirst);
         keyboardRows.add(rowSecond);
 
+        var keyboardMarkup = new ReplyKeyboardMarkup();
         keyboardMarkup.setKeyboard(keyboardRows);
         keyboardMarkup.setResizeKeyboard(Boolean.TRUE);
+
         return keyboardMarkup;
     }
 }

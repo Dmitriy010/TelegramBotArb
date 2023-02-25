@@ -13,7 +13,7 @@ public class ProducerServiceImpl implements ProducerService {
 
     @Override
     public void producerAnswer(SendMessage sendMessage) {
-        rabbitTemplate.convertAndSend("answer_message", sendMessage);
+        rabbitTemplate.convertAndSend("answer_order_info_message", sendMessage);
     }
 
     @Override

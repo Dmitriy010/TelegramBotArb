@@ -16,8 +16,8 @@ public class ConsumerServiceImpl implements ConsumerService {
     private final UpdateProcessor updateProcessor;
 
     @Override
-    @RabbitListener(queues = "answer_message")
-    public void consume(SendMessage sendMessage) {
+    @RabbitListener(queues = "answer_order_info_message")
+    public void consumeOrderInfo(SendMessage sendMessage) {
         updateProcessor.setView(sendMessage);
     }
 

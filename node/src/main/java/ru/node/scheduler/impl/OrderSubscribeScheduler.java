@@ -1,19 +1,15 @@
 package ru.node.scheduler.impl;
 
-import com.vdurmont.emoji.EmojiParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import ru.node.enums.TradeType;
-import ru.node.model.Order;
 import ru.node.repository.specification.OrderSpecification;
 import ru.node.service.OrderService;
 import ru.node.service.OrderSubscribeService;
 import ru.node.service.ProducerService;
-
-import java.time.format.DateTimeFormatter;
+import ru.node.utils.MessageUtils;
 
 @Component
 @RequiredArgsConstructor
@@ -35,59 +31,10 @@ public class OrderSubscribeScheduler {
                     orderSubscribe.getPaymentSystem(),
                     orderSubscribe.getPrice()));
             if (!orderList.isEmpty()) {
-                producerService.producerAnswerSubscribe(new SendMessage(orderSubscribe.getUserId().toString(), getTextOrder(orderList.get(0))));
+                producerService.producerAnswerSubscribe(new SendMessage(orderSubscribe.getUserId().toString(),
+                        MessageUtils.getTextOrderSubscribeResult(orderList.get(0))));
                 orderSubscribeService.deleteById(orderSubscribe.getId());
             }
         });
-    }
-
-    private String getTextOrder(Order order) {
-        var tradeType = order.getTradeType().equals(TradeType.SELL.name()) ?
-                TradeType.SELL.getName() : TradeType.BUY.getName();
-        return EmojiParser.parseToUnicode("🚀🚀🚀") +
-                "Цена достигнута" +
-                EmojiParser.parseToUnicode("🚀🚀🚀") +
-                "\n" +
-                "Дата: " +
-                order.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")) +
-                "\n" +
-                "Тип сделки: " +
-                tradeType +
-                "\n" +
-                "Биржа: " +
-                order.getExchange() +
-                "\n" +
-                "Криптовалюта: " +
-                order.getAsset() +
-                "\n" +
-                "Цена: " +
-                order.getPrice() +
-                " " +
-                order.getFiat() +
-                "\n" +
-                "Платежная система: " +
-                order.getTradeMethod() +
-                "\n" +
-                "Пользователь: " +
-                order.getUserName() +
-                "\n" +
-                "Доступно: " +
-                order.getTradableQuantity() +
-                " " +
-                order.getAsset() +
-                "\n" +
-                "Лимит: " +
-                order.getTransAmount() +
-                " " +
-                order.getFiat() +
-                "\n" +
-                "Ордеров: " +
-                order.getSuccessOrders() +
-                "\n" +
-                "Выполнено: " +
-                order.getSuccessOrdersPercent() +
-                " " + "%" +
-                "\n" +
-                "<------------------------------>";
     }
 }

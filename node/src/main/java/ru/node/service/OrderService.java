@@ -1,6 +1,5 @@
 package ru.node.service;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import ru.node.clients.request.binance.BinanceBody;
@@ -22,4 +21,6 @@ public interface OrderService {
     void scheduledOrderHuobi(@NonNull PaymentSystem payMethod,
                              @NonNull Asset asset,
                              @NonNull TradeType tradeType);
+
+    void deleteOldOrders();
 }

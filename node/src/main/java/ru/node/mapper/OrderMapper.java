@@ -6,7 +6,7 @@ import org.springframework.lang.NonNull;
 import ru.node.clients.response.binance.BinanceData;
 import ru.node.clients.response.huobi.HuobiData;
 import ru.node.config.MapStructConfig;
-import ru.node.dto.OrderSubscribeDto;
+import ru.node.dto.OrderDto;
 import ru.node.model.Order;
 import ru.node.model.OrderSubscribe;
 
@@ -39,6 +39,5 @@ public interface OrderMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "date", ignore = true)
-    @Mapping(target = "price", expression = "java(java.lang.Double.parseDouble(orderSubscribeDto.getPrice()))")
-    OrderSubscribe orderSubscribeDtoToOrderSubscribe(@NonNull OrderSubscribeDto orderSubscribeDto);
+    OrderSubscribe ordertoToOrderSubscribe(@NonNull OrderDto orderDto);
 }

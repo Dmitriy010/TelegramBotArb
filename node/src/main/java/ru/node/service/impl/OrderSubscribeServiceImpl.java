@@ -3,7 +3,7 @@ package ru.node.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
-import ru.node.dto.OrderSubscribeDto;
+import ru.node.dto.OrderDto;
 import ru.node.mapper.OrderMapper;
 import ru.node.model.OrderSubscribe;
 import ru.node.repository.OrderSubscribeRepository;
@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
+import static ru.node.constants.Constants.ZONE_ID;
+
 @Component
 @RequiredArgsConstructor
 public class OrderSubscribeServiceImpl implements OrderSubscribeService {
@@ -21,9 +23,9 @@ public class OrderSubscribeServiceImpl implements OrderSubscribeService {
     private final OrderMapper orderMapper;
 
     @Override
-    public OrderSubscribe create(OrderSubscribeDto orderSubscribeDto) {
-        var orderSubscribe = orderMapper.orderSubscribeDtoToOrderSubscribe(orderSubscribeDto);
-        orderSubscribe.setDate(LocalDateTime.now(ZoneId.of("Europe/Moscow")));
+    public OrderSubscribe create(OrderDto orderSubscribeDto) {
+        var orderSubscribe = orderMapper.ordertoToOrderSubscribe(orderSubscribeDto);
+        orderSubscribe.setDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
 
         return orderSubscribeRepository.save(orderSubscribe);
     }

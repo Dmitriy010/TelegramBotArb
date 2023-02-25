@@ -1,14 +1,16 @@
 package ru.lds.telegram.cache;
 
-import org.json.JSONObject;
+import ru.lds.telegram.dto.OrderDto;
 import ru.lds.telegram.enums.BotState;
 
 public interface DataCache {
-    void setUsersCurrentBotState(long userId, BotState botState);
+    void setUserCurrentBotState(long userId, BotState botState);
 
-    JSONObject addToUsersMessage(long userId, String key, String value);
+    void setCurrentUserMessage(long userId, OrderDto orderDto);
 
-    void deleteUsersMessage(long userId);
+    OrderDto getCurrentUserMessage(long userId);
 
-    BotState getUsersCurrentBotState(long userId);
+    void deleteUserMessage(long userId);
+
+    BotState getUserCurrentBotState(long userId);
 }
