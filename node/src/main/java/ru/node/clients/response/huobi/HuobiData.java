@@ -1,7 +1,7 @@
 package ru.node.clients.response.huobi;
 
 import lombok.Data;
-import ru.node.enums.Exchange;
+import ru.node.enums.ExchangeEnum;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,5 +20,5 @@ public class HuobiData {
     private Integer tradeMonthTimes;
     private String orderCompleteRate;
     private LocalDateTime date = LocalDateTime.now(ZoneId.of(ZONE_ID));
-    private String exchange = Exchange.HUOBI.getName();
+    private String exchange = ExchangeEnum.HUOBI.getName();
 }

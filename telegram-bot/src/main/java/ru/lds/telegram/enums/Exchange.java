@@ -13,6 +13,7 @@ public enum Exchange {
 
     BINANCE("Binance"),
     HUOBI("Huobi"),
+    MY_EXCHANGE("Мои биржи"),
     ANY("Любая");
 
     private final String name;

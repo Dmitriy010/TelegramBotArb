@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.node.clients.request.binance.BinanceBody;
-import ru.node.enums.Asset;
-import ru.node.enums.Exchange;
-import ru.node.enums.PaymentSystem;
-import ru.node.enums.TradeType;
+import ru.node.enums.AssetEnum;
+import ru.node.enums.ExchangeEnum;
+import ru.node.enums.PaymentSystemEnum;
+import ru.node.enums.TradeTypeEnum;
 import ru.node.service.OrderService;
 
 import java.util.Collections;
@@ -27,59 +27,59 @@ public class BinanceOrdersScheduler {
 
     @Scheduled(fixedRate = 10000)
     public void scheduledBuyUsdt() {
-        startScheduled(PaymentSystem.PAYEER, Asset.USDT, TradeType.BUY);
-        startScheduled(PaymentSystem.SBERBANK, Asset.USDT, TradeType.BUY);
-        startScheduled(PaymentSystem.RAIFFEISENBANK, Asset.USDT, TradeType.BUY);
-        startScheduled(PaymentSystem.TINKOFF, Asset.USDT, TradeType.BUY);
-        startScheduled(PaymentSystem.QIWI, Asset.USDT, TradeType.BUY);
+        startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.USDT, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.USDT, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.RAIFFEISENBANK, AssetEnum.USDT, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.TINKOFF, AssetEnum.USDT, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.QIWI, AssetEnum.USDT, TradeTypeEnum.BUY);
     }
 
     @Scheduled(fixedRate = 10000, initialDelay = 2000)
     public void scheduledSellUsdt() {
-        startScheduled(PaymentSystem.PAYEER, Asset.USDT, TradeType.SELL);
-        startScheduled(PaymentSystem.SBERBANK, Asset.USDT, TradeType.SELL);
-        startScheduled(PaymentSystem.RAIFFEISENBANK, Asset.USDT, TradeType.SELL);
-        startScheduled(PaymentSystem.TINKOFF, Asset.USDT, TradeType.SELL);
-        startScheduled(PaymentSystem.QIWI, Asset.USDT, TradeType.SELL);
+        startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.USDT, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.USDT, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.RAIFFEISENBANK, AssetEnum.USDT, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.TINKOFF, AssetEnum.USDT, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.QIWI, AssetEnum.USDT, TradeTypeEnum.SELL);
     }
 
     @Scheduled(fixedRate = 10000, initialDelay = 4000)
     public void scheduledBuyBtc() {
-        startScheduled(PaymentSystem.PAYEER, Asset.BTC, TradeType.BUY);
-        startScheduled(PaymentSystem.SBERBANK, Asset.BTC, TradeType.BUY);
-        startScheduled(PaymentSystem.RAIFFEISENBANK, Asset.BTC, TradeType.BUY);
-        startScheduled(PaymentSystem.TINKOFF, Asset.BTC, TradeType.BUY);
-        startScheduled(PaymentSystem.QIWI, Asset.BTC, TradeType.BUY);
+        startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.BTC, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.BTC, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.RAIFFEISENBANK, AssetEnum.BTC, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.TINKOFF, AssetEnum.BTC, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.QIWI, AssetEnum.BTC, TradeTypeEnum.BUY);
     }
 
     @Scheduled(fixedRate = 10000, initialDelay = 6000)
     public void scheduledSellBtc() {
-        startScheduled(PaymentSystem.PAYEER, Asset.BTC, TradeType.SELL);
-        startScheduled(PaymentSystem.SBERBANK, Asset.BTC, TradeType.SELL);
-        startScheduled(PaymentSystem.RAIFFEISENBANK, Asset.BTC, TradeType.SELL);
-        startScheduled(PaymentSystem.TINKOFF, Asset.BTC, TradeType.SELL);
-        startScheduled(PaymentSystem.QIWI, Asset.BTC, TradeType.SELL);
+        startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.BTC, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.BTC, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.RAIFFEISENBANK, AssetEnum.BTC, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.TINKOFF, AssetEnum.BTC, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.QIWI, AssetEnum.BTC, TradeTypeEnum.SELL);
     }
 
     @Scheduled(fixedRate = 10000, initialDelay = 8000)
     public void scheduledBuyEth() {
-        startScheduled(PaymentSystem.PAYEER, Asset.ETH, TradeType.BUY);
-        startScheduled(PaymentSystem.SBERBANK, Asset.ETH, TradeType.BUY);
-        startScheduled(PaymentSystem.RAIFFEISENBANK, Asset.ETH, TradeType.BUY);
-        startScheduled(PaymentSystem.TINKOFF, Asset.ETH, TradeType.BUY);
-        startScheduled(PaymentSystem.QIWI, Asset.ETH, TradeType.BUY);
+        startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.ETH, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.ETH, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.RAIFFEISENBANK, AssetEnum.ETH, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.TINKOFF, AssetEnum.ETH, TradeTypeEnum.BUY);
+        startScheduled(PaymentSystemEnum.QIWI, AssetEnum.ETH, TradeTypeEnum.BUY);
     }
 
     @Scheduled(fixedRate = 10000, initialDelay = 10000)
     public void scheduledSellEth() {
-        startScheduled(PaymentSystem.PAYEER, Asset.ETH, TradeType.SELL);
-        startScheduled(PaymentSystem.SBERBANK, Asset.ETH, TradeType.SELL);
-        startScheduled(PaymentSystem.RAIFFEISENBANK, Asset.ETH, TradeType.SELL);
-        startScheduled(PaymentSystem.TINKOFF, Asset.ETH, TradeType.SELL);
-        startScheduled(PaymentSystem.QIWI, Asset.ETH, TradeType.SELL);
+        startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.ETH, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.ETH, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.RAIFFEISENBANK, AssetEnum.ETH, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.TINKOFF, AssetEnum.ETH, TradeTypeEnum.SELL);
+        startScheduled(PaymentSystemEnum.QIWI, AssetEnum.ETH, TradeTypeEnum.SELL);
     }
 
-    private void startScheduled(PaymentSystem payMethod, Asset asset, TradeType tradeType) {
+    private void startScheduled(PaymentSystemEnum payMethod, AssetEnum assetEnum, TradeTypeEnum tradeTypeEnum) {
         CompletableFuture.runAsync(() -> orderService.scheduledOrderBinance(new BinanceBody(
                 Boolean.FALSE,
                 1,
@@ -88,14 +88,14 @@ public class BinanceOrdersScheduler {
                 Collections.emptyList(),
                 null,
                 Integer.parseInt(BALANCE),
-                asset.getNameBinance(),
+                assetEnum.getNameBinance(),
                 FIAT_RUB,
-                tradeType.getNameBinance()))).exceptionally((e) -> {
+                tradeTypeEnum.getNameBinance()))).exceptionally((e) -> {
             log.error("!-----" +
-                    Exchange.BINANCE.getName() + " -> " +
+                    ExchangeEnum.BINANCE.getName() + " -> " +
                     payMethod.getNameBinance() + " -> " +
-                    asset.getNameBinance() + " -> " +
-                    tradeType.getNameBinance() + "-----!");
+                    assetEnum.getNameBinance() + " -> " +
+                    tradeTypeEnum.getNameBinance() + "-----!");
             log.error(e.getMessage(), e);
             return null;
         });

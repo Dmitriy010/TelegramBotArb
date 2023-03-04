@@ -25,4 +25,14 @@ public class ProducerServiceImpl implements ProducerService {
     public void producerAnswerActionSubscribe(SendMessage sendMessage) {
         rabbitTemplate.convertAndSend("answer_action_subscribe", sendMessage);
     }
+
+    @Override
+    public void producerAnswerActionUserExchange(SendMessage sendMessage) {
+        rabbitTemplate.convertAndSend("answer_action_user_exchange", sendMessage);
+    }
+
+    @Override
+    public void producerAnswerActionUserPaymentSystem(SendMessage sendMessage) {
+        rabbitTemplate.convertAndSend("answer_action_user_payment_system", sendMessage);
+    }
 }

@@ -6,6 +6,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import ru.lds.telegram.dto.OrderDto;
 import ru.lds.telegram.dto.SubscribeActionDto;
+import ru.lds.telegram.dto.UserActionDto;
+import ru.lds.telegram.dto.UserRegisterDto;
 import ru.lds.telegram.service.ProducerService;
 
 @Service
@@ -23,5 +25,15 @@ public class ProducerServiceImpl implements ProducerService {
     @Override
     public void produceSubscribeAction(String rabbitQueue, SubscribeActionDto subscribeActionDto) {
         rabbitTemplate.convertAndSend(rabbitQueue, subscribeActionDto);
+    }
+
+    @Override
+    public void produceUserAction(String rabbitQueue, UserActionDto userActionDto) {
+        rabbitTemplate.convertAndSend(rabbitQueue, userActionDto);
+    }
+
+    @Override
+    public void produceUserRegister(String rabbitQueue, UserRegisterDto userRegisterDto) {
+        rabbitTemplate.convertAndSend(rabbitQueue, userRegisterDto);
     }
 }

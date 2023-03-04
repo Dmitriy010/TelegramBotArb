@@ -8,4 +8,8 @@ public interface ProducerService {
     void producerAnswerSubscribe(SendMessage sendMessage);
 
     void producerAnswerActionSubscribe(SendMessage sendMessage);
+
+    void producerAnswerActionUserExchange(SendMessage sendMessage);
+
+    void producerAnswerActionUserPaymentSystem(SendMessage sendMessage);
 }

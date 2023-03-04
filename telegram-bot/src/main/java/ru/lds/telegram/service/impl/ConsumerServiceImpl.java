@@ -32,4 +32,16 @@ public class ConsumerServiceImpl implements ConsumerService {
     public void consumeSubscribeAction(SendMessage sendMessage) {
         updateProcessor.setView(sendMessage);
     }
+
+    @Override
+    @RabbitListener(queues = "answer_action_user_exchange")
+    public void consumeUserActionExchange(SendMessage sendMessage) {
+        updateProcessor.setView(sendMessage);
+    }
+
+    @Override
+    @RabbitListener(queues = "answer_action_user_payment_system")
+    public void consumeUserActionPaymentSystem(SendMessage sendMessage) {
+        updateProcessor.setView(sendMessage);
+    }
 }

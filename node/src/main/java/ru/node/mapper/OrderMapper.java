@@ -19,7 +19,7 @@ public interface OrderMapper {
     @Mapping(target = "fiat", source = "binanceData.adv.fiatUnit")
     @Mapping(target = "price", source = "binanceData.adv.price")
     @Mapping(target = "transAmount", expression = "java(binanceData.getAdv().getMinSingleTransAmount() + \" - \" + binanceData.getAdv().getMaxSingleTransAmount())")
-    @Mapping(target = "tradeMethod", expression = "java(ru.node.enums.PaymentSystem.getByNameBinance(binanceData.getAdv().getTradeMethods().get(0).getIdentifier()).getName())")
+    @Mapping(target = "tradeMethod", expression = "java(ru.node.enums.PaymentSystemEnum.getByNameBinance(binanceData.getAdv().getTradeMethods().get(0).getIdentifier()).getName())")
     @Mapping(target = "tradableQuantity", source = "binanceData.adv.tradableQuantity")
     @Mapping(target = "userName", source = "binanceData.advertiser.nickName")
     @Mapping(target = "successOrders", source = "binanceData.advertiser.monthOrderCount")

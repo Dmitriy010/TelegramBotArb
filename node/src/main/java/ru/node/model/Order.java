@@ -20,7 +20,6 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "orders")
-@ToString
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

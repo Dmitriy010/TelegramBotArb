@@ -3,7 +3,7 @@ package ru.node.utils;
 import com.vdurmont.emoji.EmojiParser;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.node.enums.TradeType;
+import ru.node.enums.TradeTypeEnum;
 import ru.node.model.Order;
 import ru.node.model.OrderSubscribe;
 
@@ -14,8 +14,8 @@ import static ru.node.constants.Constants.FIAT_RUB;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MessageUtils {
     public static String getTextOrderSubscribeForUser(OrderSubscribe orderSubscribe) {
-        var tradeType = orderSubscribe.getTradeType().equals(TradeType.SELL.name()) ?
-                TradeType.SELL.getName() : TradeType.BUY.getName();
+        var tradeType = orderSubscribe.getTradeType().equals(TradeTypeEnum.SELL.name()) ?
+                TradeTypeEnum.SELL.getName() : TradeTypeEnum.BUY.getName();
         return EmojiParser.parseToUnicode("📋📋📋") +
                 "Подписка" +
                 EmojiParser.parseToUnicode("📋📋📋") +
@@ -121,8 +121,8 @@ public class MessageUtils {
     }
 
     public static String getTextOrderSubscribeResult(Order order) {
-        var tradeType = order.getTradeType().equals(TradeType.SELL.name()) ?
-                TradeType.SELL.getName() : TradeType.BUY.getName();
+        var tradeType = order.getTradeType().equals(TradeTypeEnum.SELL.name()) ?
+                TradeTypeEnum.SELL.getName() : TradeTypeEnum.BUY.getName();
         return EmojiParser.parseToUnicode("🚀🚀🚀") +
                 "Цена достигнута" +
                 EmojiParser.parseToUnicode("🚀🚀🚀") +

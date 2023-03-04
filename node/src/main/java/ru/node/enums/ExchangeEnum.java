@@ -5,10 +5,13 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum SubscribeAction {
+public enum ExchangeEnum {
 
-    FIND_ALL("findAll"),
-    DELETE("delete");
+    BINANCE("Binance"),
+    HUOBI("Huobi"),
+    MY_EXCHANGE("Мои биржи"),
+    ANY("Любая");
+
 
     private final String name;
 }

@@ -9,4 +9,8 @@ public interface ConsumerService {
     void consumeSubscribe(SendMessage sendMessage);
 
     void consumeSubscribeAction(SendMessage sendMessage);
+
+    void consumeUserActionExchange(SendMessage sendMessage);
+
+    void consumeUserActionPaymentSystem(SendMessage sendMessage);
 }

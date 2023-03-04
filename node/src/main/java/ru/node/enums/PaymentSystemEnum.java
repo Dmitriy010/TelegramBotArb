@@ -9,28 +9,28 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Getter
-public enum PaymentSystem {
+public enum PaymentSystemEnum {
 
     PAYEER("Payeer", "24", "Payeer"),
     SBERBANK("SberBank", "29", "RosBankNew"),
     RAIFFEISENBANK("RaiffeisenBank", "36", "RaiffeisenBank"),
     TINKOFF("Tinkoff", "28", "TinkoffNew"),
-    ALFABANK("AlfaBank", "25", ""),
     QIWI("Qiwi", "9", "QIWI"),
+    MY_PAYMENT_SYSTEM("Мои платежные системы", null, null),
     ANY("Любая", null, null);
 
     private final String name;
     private final String nameHuobi;
     private final String nameBinance;
 
-    private static final Map<String, PaymentSystem> mapPs = new HashMap<>();
+    private static final Map<String, PaymentSystemEnum> mapPs = new HashMap<>();
 
     static {
-        Arrays.stream(PaymentSystem.values())
+        Arrays.stream(PaymentSystemEnum.values())
                 .forEach(paymentSystem -> mapPs.put(paymentSystem.getNameBinance(), paymentSystem));
     }
 
-    public static PaymentSystem getByNameBinance(String nameBinance){
+    public static PaymentSystemEnum getByNameBinance(String nameBinance){
         return mapPs.get(nameBinance);
     }
 }

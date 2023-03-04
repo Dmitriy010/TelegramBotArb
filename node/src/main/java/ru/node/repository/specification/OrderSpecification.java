@@ -5,9 +5,9 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
-import ru.node.enums.Exchange;
-import ru.node.enums.PaymentSystem;
-import ru.node.enums.TradeType;
+import ru.node.enums.ExchangeEnum;
+import ru.node.enums.PaymentSystemEnum;
+import ru.node.enums.TradeTypeEnum;
 import ru.node.model.Order;
 
 import java.util.ArrayList;
@@ -28,8 +28,16 @@ public class OrderSpecification {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("exchange"), exchange));
     }
 
+    private static Specification<Order> filterByAllExchange(List<String> exchangeList) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("exchange")).value(exchangeList));
+    }
+
     private static Specification<Order> filterByTradeMethod(@NonNull String tradeMethod) {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("tradeMethod"), tradeMethod));
+    }
+
+    private static Specification<Order> filterByAllPaymentSystem(List<String> tradeMethodList) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("tradeMethod")).value(tradeMethodList));
     }
 
     private static Specification<Order> filterByPriceBuy(@NonNull Double price) {
@@ -42,7 +50,7 @@ public class OrderSpecification {
 
     private static Specification<Order> orderByPrice(String tradeType) {
         return ((root, query, criteriaBuilder) -> {
-            if (TradeType.SELL.name().equals(tradeType)) {
+            if (TradeTypeEnum.SELL.name().equals(tradeType)) {
                 return query.orderBy(criteriaBuilder.asc(root.get("price"))).getRestriction();
             } else {
                 return query.orderBy(criteriaBuilder.desc(root.get("price"))).getRestriction();
@@ -50,11 +58,11 @@ public class OrderSpecification {
         });
     }
 
-    private static Specification<Order> filterByBestPrice(String tradeType, String asset, String exchange, String tradeMethod) {
+    private static Specification<Order> filterByBestPrice(String tradeType, String asset, List<String> exchange, List<String> tradeMethod) {
         return ((root, query, criteriaBuilder) -> {
             var subquery = query.subquery(Double.class);
             var subRoot = subquery.from(Order.class);
-            if (tradeType.equals(TradeType.SELL.name())) {
+            if (tradeType.equals(TradeTypeEnum.SELL.name())) {
                 subquery.select(criteriaBuilder.min(subRoot.get("price")));
             } else {
                 subquery.select(criteriaBuilder.max(subRoot.get("price")));
@@ -64,12 +72,16 @@ public class OrderSpecification {
             predicates.add(criteriaBuilder.equal(subRoot.get("asset"), asset));
             predicates.add(criteriaBuilder.equal(subRoot.get("tradeType"), tradeType));
 
-            if (!Exchange.ANY.getName().equals(exchange)) {
-                predicates.add(criteriaBuilder.equal(subRoot.get("exchange"), exchange));
+            if (exchange.size() == 1 && !exchange.get(0).equals(ExchangeEnum.ANY.getName())) {
+                predicates.add(criteriaBuilder.equal(subRoot.get("exchange"), exchange.get(0)));
+            } else if (exchange.size() > 1) {
+                predicates.add(criteriaBuilder.in(subRoot.get("exchange")).value(exchange));
             }
 
-            if (!PaymentSystem.ANY.getName().equals(tradeMethod)) {
-                predicates.add(criteriaBuilder.equal(subRoot.get("tradeMethod"), tradeMethod));
+            if (tradeMethod.size() == 1 && !tradeMethod.get(0).equals(PaymentSystemEnum.ANY.getName())) {
+                predicates.add(criteriaBuilder.equal(subRoot.get("tradeMethod"), tradeMethod.get(0)));
+            } else if (tradeMethod.size() > 1) {
+                predicates.add(criteriaBuilder.in(subRoot.get("tradeMethod")).value(tradeMethod));
             }
 
             subquery.where(predicates.toArray(new Predicate[]{}));
@@ -78,22 +90,60 @@ public class OrderSpecification {
         });
     }
 
-    public static Specification<Order> getFilterOrderSubscribePrice(String tradeType, String asset, String exchange, String tradeMethod, Double price) {
+    public static Specification<Order> getFilterOrderSubscribePrice(String tradeType, String asset, List<String> exchange, List<String> tradeMethod, Double price) {
+        Specification<Order> exchangeSpec;
+        Specification<Order> paymentSystemSpec;
+
+        if (exchange.isEmpty() || exchange.get(0).equals(ExchangeEnum.ANY.getName())) {
+            exchangeSpec = null;
+        } else if (exchange.size() == 1) {
+            exchangeSpec = filterByExchange(exchange.get(0));
+        } else {
+            exchangeSpec = filterByAllExchange(exchange);
+        }
+
+        if (tradeMethod.isEmpty() || tradeMethod.get(0).equals(PaymentSystemEnum.ANY.getName())) {
+            paymentSystemSpec = null;
+        } else if (tradeMethod.size() == 1) {
+            paymentSystemSpec = filterByTradeMethod(tradeMethod.get(0));
+        } else {
+            paymentSystemSpec = filterByAllPaymentSystem(tradeMethod);
+        }
+
         return Specification.
                 where(filterByTradeType(tradeType))
                 .and(filterByAsset(asset))
-                .and(exchange.equals(Exchange.ANY.getName()) ? null : filterByExchange(exchange))
-                .and(tradeMethod.equals(PaymentSystem.ANY.getName()) ? null : filterByTradeMethod(tradeMethod))
-                .and(tradeType.equals(TradeType.SELL.name()) ? filterByPriceSell(price) : filterByPriceBuy(price))
+                .and(exchangeSpec)
+                .and(paymentSystemSpec)
+                .and(tradeType.equals(TradeTypeEnum.SELL.name()) ? filterByPriceSell(price) : filterByPriceBuy(price))
                 .and(orderByPrice(tradeType));
     }
 
-    public static Specification<Order> getFilterOrderCheckPrice(String tradeType, String asset, String exchange, String tradeMethod) {
+    public static Specification<Order> getFilterOrderCheckPrice(String tradeType, String asset, List<String> exchange, List<String> tradeMethod) {
+        Specification<Order> exchangeSpec;
+        Specification<Order> paymentSystemSpec;
+
+        if (exchange.isEmpty() || exchange.get(0).equals(ExchangeEnum.ANY.getName())) {
+            exchangeSpec = null;
+        } else if (exchange.size() == 1) {
+            exchangeSpec = filterByExchange(exchange.get(0));
+        } else {
+            exchangeSpec = filterByAllExchange(exchange);
+        }
+
+        if (tradeMethod.isEmpty() || tradeMethod.get(0).equals(PaymentSystemEnum.ANY.getName())) {
+            paymentSystemSpec = null;
+        } else if (tradeMethod.size() == 1) {
+            paymentSystemSpec = filterByTradeMethod(tradeMethod.get(0));
+        } else {
+            paymentSystemSpec = filterByAllPaymentSystem(tradeMethod);
+        }
+
         return Specification.
                 where(filterByTradeType(tradeType))
                 .and(filterByAsset(asset))
-                .and(exchange.equals(Exchange.ANY.getName()) ? null : filterByExchange(exchange))
-                .and(tradeMethod.equals(PaymentSystem.ANY.getName()) ? null : filterByTradeMethod(tradeMethod))
+                .and(exchangeSpec)
+                .and(paymentSystemSpec)
                 .and(filterByBestPrice(tradeType, asset, exchange, tradeMethod));
     }
 }

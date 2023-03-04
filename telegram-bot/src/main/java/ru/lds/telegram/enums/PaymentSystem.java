@@ -12,6 +12,7 @@ public enum PaymentSystem {
     RAIFFEISENBANK("RaiffeisenBank"),
     PAYEER("Payeer"),
     QIWI("Qiwi"),
+    MY_PAYMENT_SYSTEM("Мои платежные системы"),
     ANY("Любая");
 
     private final String name;

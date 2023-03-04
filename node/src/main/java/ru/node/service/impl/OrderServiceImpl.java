@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import ru.node.clients.BinanceServiceClient;
 import ru.node.clients.HuobiServiceClient;
 import ru.node.clients.request.binance.BinanceBody;
-import ru.node.enums.Asset;
-import ru.node.enums.PaymentSystem;
-import ru.node.enums.TradeType;
+import ru.node.enums.AssetEnum;
+import ru.node.enums.PaymentSystemEnum;
+import ru.node.enums.TradeTypeEnum;
 import ru.node.mapper.OrderMapper;
 import ru.node.model.Order;
 import ru.node.repository.OrderRepository;
@@ -57,13 +57,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void scheduledOrderHuobi(@NonNull PaymentSystem payMethod,
-                                    @NonNull Asset asset,
-                                    @NonNull TradeType tradeType) {
+    public void scheduledOrderHuobi(@NonNull PaymentSystemEnum payMethod,
+                                    @NonNull AssetEnum assetEnum,
+                                    @NonNull TradeTypeEnum tradeTypeEnum) {
         Map<String, String> mapParameters = new HashMap<>();
-        mapParameters.put("coinId", asset.getNameHuobi());
+        mapParameters.put("coinId", assetEnum.getNameHuobi());
         mapParameters.put("currency", "11");
-        mapParameters.put("tradeType", tradeType.getNameHuobi());
+        mapParameters.put("tradeType", tradeTypeEnum.getNameHuobi());
         mapParameters.put("currPage", "1");
         mapParameters.put("payMethod", payMethod.getNameHuobi());
         mapParameters.put("acceptOrder", "0");
@@ -91,8 +91,8 @@ public class OrderServiceImpl implements OrderService {
             huobiData.setPayMethods(tradeMethodsList);
             var huobiOrder = orderMapper.huobiDataToOrder(huobiData);
             huobiOrder.setFiat(FIAT_RUB);
-            huobiOrder.setAsset(asset.name());
-            huobiOrder.setTradeType(tradeType.name());
+            huobiOrder.setAsset(assetEnum.name());
+            huobiOrder.setTradeType(tradeTypeEnum.name());
             huobiOrder.setTradeMethod(payMethod.getName());
             merge(huobiOrder);
         }
