@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.lds.telegram.dto.OrderDto;
 import ru.lds.telegram.dto.SubscribeActionDto;
 import ru.lds.telegram.dto.UserActionDto;
+import ru.lds.telegram.dto.UserActionExOrPsDto;
 import ru.lds.telegram.dto.UserRegisterDto;
 import ru.lds.telegram.service.ProducerService;
 
@@ -25,6 +26,11 @@ public class ProducerServiceImpl implements ProducerService {
     @Override
     public void produceSubscribeAction(String rabbitQueue, SubscribeActionDto subscribeActionDto) {
         rabbitTemplate.convertAndSend(rabbitQueue, subscribeActionDto);
+    }
+
+    @Override
+    public void produceUserActionExOrPs(String rabbitQueue, UserActionExOrPsDto userActionExOrPsDto) {
+        rabbitTemplate.convertAndSend(rabbitQueue, userActionExOrPsDto);
     }
 
     @Override

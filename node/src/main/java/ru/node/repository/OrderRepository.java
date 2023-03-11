@@ -13,11 +13,12 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Optional<Order> findByExchangeAndAssetAndTradeMethodAndTradeType(
+    Optional<Order> findByExchangeAndAssetAndTradeMethodAndTradeTypeAndUserName(
             @NonNull String exchange,
             @NonNull String asset,
             @NonNull String tradeMethod,
-            @NonNull String tradeType);
+            @NonNull String tradeType,
+            @NonNull String userName);
 
     List<Order> findAll(Specification<Order> specification);
 

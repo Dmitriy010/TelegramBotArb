@@ -48,6 +48,14 @@ public class OrderSpecification {
         return ((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("price"), price));
     }
 
+    private static Specification<Order> filterByTransAmountMax(@NonNull Double transAmountMin) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("transAmountMax"), transAmountMin));
+    }
+
+    private static Specification<Order> filterByTransAmountMin(@NonNull Double transAmountMin) {
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("transAmountMin"), transAmountMin));
+    }
+
     private static Specification<Order> orderByPrice(String tradeType) {
         return ((root, query, criteriaBuilder) -> {
             if (TradeTypeEnum.SELL.name().equals(tradeType)) {
@@ -58,7 +66,7 @@ public class OrderSpecification {
         });
     }
 
-    private static Specification<Order> filterByBestPrice(String tradeType, String asset, List<String> exchange, List<String> tradeMethod) {
+    private static Specification<Order> filterByBestPrice(String tradeType, String asset, Double transAmountMin, List<String> exchange, List<String> tradeMethod) {
         return ((root, query, criteriaBuilder) -> {
             var subquery = query.subquery(Double.class);
             var subRoot = subquery.from(Order.class);
@@ -71,6 +79,8 @@ public class OrderSpecification {
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(criteriaBuilder.equal(subRoot.get("asset"), asset));
             predicates.add(criteriaBuilder.equal(subRoot.get("tradeType"), tradeType));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(subRoot.get("transAmountMax"), transAmountMin));
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(subRoot.get("transAmountMin"), transAmountMin));
 
             if (exchange.size() == 1 && !exchange.get(0).equals(ExchangeEnum.ANY.getName())) {
                 predicates.add(criteriaBuilder.equal(subRoot.get("exchange"), exchange.get(0)));
@@ -90,7 +100,7 @@ public class OrderSpecification {
         });
     }
 
-    public static Specification<Order> getFilterOrderSubscribePrice(String tradeType, String asset, List<String> exchange, List<String> tradeMethod, Double price) {
+    public static Specification<Order> getFilterOrderSubscribePrice(String tradeType, String asset, Double transAmountMin, List<String> exchange, List<String> tradeMethod, Double price) {
         Specification<Order> exchangeSpec;
         Specification<Order> paymentSystemSpec;
 
@@ -113,13 +123,15 @@ public class OrderSpecification {
         return Specification.
                 where(filterByTradeType(tradeType))
                 .and(filterByAsset(asset))
+                .and(filterByTransAmountMin(transAmountMin))
+                .and(filterByTransAmountMax(transAmountMin))
                 .and(exchangeSpec)
                 .and(paymentSystemSpec)
                 .and(tradeType.equals(TradeTypeEnum.SELL.name()) ? filterByPriceSell(price) : filterByPriceBuy(price))
                 .and(orderByPrice(tradeType));
     }
 
-    public static Specification<Order> getFilterOrderCheckPrice(String tradeType, String asset, List<String> exchange, List<String> tradeMethod) {
+    public static Specification<Order> getFilterOrderCheckPrice(String tradeType, String asset, Double transAmountMin, List<String> exchange, List<String> tradeMethod) {
         Specification<Order> exchangeSpec;
         Specification<Order> paymentSystemSpec;
 
@@ -142,8 +154,10 @@ public class OrderSpecification {
         return Specification.
                 where(filterByTradeType(tradeType))
                 .and(filterByAsset(asset))
+                .and(filterByTransAmountMin(transAmountMin))
+                .and(filterByTransAmountMax(transAmountMin))
                 .and(exchangeSpec)
                 .and(paymentSystemSpec)
-                .and(filterByBestPrice(tradeType, asset, exchange, tradeMethod));
+                .and(filterByBestPrice(tradeType, asset, transAmountMin, exchange, tradeMethod));
     }
 }

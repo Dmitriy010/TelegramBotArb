@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum SubscribeActionEnum {
 
     FIND_ALL("findAll"),
-    DELETE("delete");
+    DELETE("delete"),
+    DELETE_ALL("deleteAll");
 
     private final String name;
 }

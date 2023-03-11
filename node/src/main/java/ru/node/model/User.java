@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +36,8 @@ public class User {
     private List<ExchangeUser> exchangeUserList;
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<PaymentSystemUser> paymentSystemUserList;
-
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private LimitUser limitUser;
     public User(Long id) {
         this.id = id;
     }

@@ -16,14 +16,14 @@ import java.util.List;
 public interface PaymentSystemUserRepository extends JpaRepository<PaymentSystemUser, Long> {
     @Query("SELECT psu FROM PaymentSystemUser psu " +
             "JOIN FETCH psu.paymentSystem " +
-            "WHERE psu.user = :user")
-    List<PaymentSystemUser> findAllByUser(@Param("user") User user);
+            "WHERE psu.user.userId = :userId")
+    List<PaymentSystemUser> findAllByUser(@Param("userId") Long userId);
 
     @Transactional
     void deleteAllByUser(User user);
 
-    @Query("DELETE from PaymentSystemUser exs WHERE exs.user = :user AND exs.paymentSystem IN (:paymentSystemList)")
+    @Query("DELETE from PaymentSystemUser psu WHERE psu.user = :user AND psu.paymentSystem = :paymentSystem")
     @Modifying
     @Transactional
-    void deleteAllByPaymentSystemsAndUser(@Param("user") User user, @Param("paymentSystemList") List<PaymentSystem> paymentSystemList);
+    void deleteByUserAndPaymentSystem(@Param("user") User user, @Param("paymentSystem") PaymentSystem paymentSystem);
 }

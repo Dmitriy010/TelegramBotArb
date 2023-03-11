@@ -7,11 +7,13 @@ import java.util.List;
 
 public interface OrderSubscribeService {
 
-    OrderSubscribe create(OrderDto orderDto);
+    OrderSubscribe create(OrderDto orderDto, Double limit);
 
     List<OrderSubscribe> findAll();
 
     List<OrderSubscribe> findAllByUserId(Long UserId);
 
-    Boolean deleteById(Long id);
+    void deleteById(Long id);
+
+    void deleteAllByUserId(Long userId);
 }

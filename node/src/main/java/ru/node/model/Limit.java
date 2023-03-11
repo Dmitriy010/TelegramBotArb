@@ -4,31 +4,29 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "orders_subscribe")
-public class OrderSubscribe {
+@Table(name = "limits")
+public class Limit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String asset;
-    private String exchange;
-    private String paymentSystem;
-    private String tradeType;
-    private Long userId;
-    private Double price;
-    private Double transAmountMin;
-    private LocalDateTime date;
+    private Long volume;
+    @OneToOne(mappedBy = "limit")
+    private LimitUser limitUser;
+
+    public Limit(Long id) {
+        this.id = id;
+    }
 }

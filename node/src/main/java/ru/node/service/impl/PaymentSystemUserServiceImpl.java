@@ -1,5 +1,6 @@
 package ru.node.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.node.model.PaymentSystem;
@@ -17,13 +18,14 @@ public class PaymentSystemUserServiceImpl implements PaymentSystemUserService {
     private final PaymentSystemUserRepository paymentSystemUserRepository;
 
     @Override
-    public void create(List<PaymentSystemUser> paymentSystemUserList) {
-        paymentSystemUserRepository.saveAll(paymentSystemUserList);
+    @Transactional
+    public void createByUserIdAndPaymentSystemId(Long userId, Long paymentSystem) {
+        paymentSystemUserRepository.save(new PaymentSystemUser(new User(userId), new PaymentSystem(paymentSystem)));
     }
 
     @Override
-    public void deleteByPaymentSystemsAndUser(User user, List<PaymentSystem> paymentSystemList) {
-        paymentSystemUserRepository.deleteAllByPaymentSystemsAndUser(user, paymentSystemList);
+    public void deleteByUserAndPaymentSystemId(User user, Long paymentSystem) {
+        paymentSystemUserRepository.deleteByUserAndPaymentSystem(user, new PaymentSystem(paymentSystem));
     }
 
     @Override
@@ -33,6 +35,6 @@ public class PaymentSystemUserServiceImpl implements PaymentSystemUserService {
 
     @Override
     public List<PaymentSystemUser> findAllByUserId(Long userId) {
-        return paymentSystemUserRepository.findAllByUser(new User(userId));
+        return paymentSystemUserRepository.findAllByUser(userId);
     }
 }

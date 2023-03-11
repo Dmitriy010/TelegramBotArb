@@ -32,6 +32,8 @@ import static ru.node.constants.Constants.ZONE_ID;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
+    private static final int ORDER_COUNT = 15;
+    private static final double ORDER_PERCENT = 90.0;
     private final BinanceServiceClient binanceServiceClient;
     private final HuobiServiceClient huobiServiceClient;
     private final OrderMapper orderMapper;
@@ -43,16 +45,26 @@ public class OrderServiceImpl implements OrderService {
 
         var responseBody = response.getBody();
         if (Objects.nonNull(responseBody) &&
-            Objects.nonNull(responseBody.getData()) &&
-            !responseBody.getData().isEmpty()) {
+                Objects.nonNull(responseBody.getData()) &&
+                !responseBody.getData().isEmpty()) {
 
-            var binanceData = responseBody.getData().get(0);
-            var tradeMethodsList = binanceData.getAdv().getTradeMethods().stream()
-                    .filter(tradeM -> tradeM.getIdentifier().equals(binanceBody.getPayTypes().get(0)))
-                    .collect(Collectors.toList());
-            binanceData.getAdv().setTradeMethods(tradeMethodsList);
-            var binanceOrder = orderMapper.binanceDataToOrder(binanceData);
-            merge(binanceOrder);
+            var binanceData = responseBody.getData().stream()
+                    .filter(data -> data.getAdvertiser().getMonthOrderCount() > ORDER_COUNT &&
+                            data.getAdvertiser().getMonthFinishRate() * 100 > ORDER_PERCENT)
+                    .toList();
+
+            if (!binanceData.isEmpty()) {
+                binanceData.forEach(data -> {
+                    var tradeMethodsList = data.getAdv().getTradeMethods().stream()
+                            .filter(tradeM -> tradeM.getIdentifier().equals(binanceBody.getPayTypes().get(0)))
+                            .collect(Collectors.toList());
+                    data.getAdv().setTradeMethods(tradeMethodsList);
+                });
+
+                var binanceOrderList = orderMapper.binanceDataToOrder(binanceData);
+
+                binanceOrderList.forEach(this::merge);
+            }
         }
     }
 
@@ -79,39 +91,53 @@ public class OrderServiceImpl implements OrderService {
         mapParameters.put("isFollowed", "false");
 
         var responseBody = huobiServiceClient.getOrders(mapParameters).getBody();
-
         if (Objects.nonNull(responseBody) &&
-            Objects.nonNull(responseBody.getData()) &&
-            !responseBody.getData().isEmpty()) {
+                Objects.nonNull(responseBody.getData()) &&
+                !responseBody.getData().isEmpty()) {
 
-            var huobiData = responseBody.getData().get(0);
-            var tradeMethodsList = huobiData.getPayMethods().stream()
-                    .filter(tradeM -> tradeM.getPayMethodId().toString().equals(payMethod.getNameHuobi()))
-                    .collect(Collectors.toList());
-            huobiData.setPayMethods(tradeMethodsList);
-            var huobiOrder = orderMapper.huobiDataToOrder(huobiData);
-            huobiOrder.setFiat(FIAT_RUB);
-            huobiOrder.setAsset(assetEnum.name());
-            huobiOrder.setTradeType(tradeTypeEnum.name());
-            huobiOrder.setTradeMethod(payMethod.getName());
-            merge(huobiOrder);
+            var huobiData = responseBody.getData().stream()
+                    .filter(data -> data.getTradeMonthTimes() > ORDER_COUNT &&
+                            Double.parseDouble(data.getOrderCompleteRate()) > ORDER_PERCENT)
+                    .toList();
+
+            if (!huobiData.isEmpty()) {
+
+                huobiData.forEach(data -> {
+                    var tradeMethodsList = data.getPayMethods().stream()
+                            .filter(tradeM -> tradeM.getPayMethodId().toString().equals(payMethod.getNameHuobi()))
+                            .collect(Collectors.toList());
+                    data.setPayMethods(tradeMethodsList);
+                });
+
+                var huobiOrderList = orderMapper.huobiDataToOrder(huobiData);
+
+                huobiOrderList.forEach(order -> {
+                    order.setFiat(FIAT_RUB);
+                    order.setAsset(assetEnum.name());
+                    order.setTradeType(tradeTypeEnum.name());
+                    order.setTradeMethod(payMethod.getName());
+                });
+
+                huobiOrderList.forEach(this::merge);
+            }
         }
     }
 
     @Override
     @Transactional
     public void deleteOldOrders() {
-        orderRepository.deleteAllByDateIsLessThan(LocalDateTime.now(ZoneId.of(ZONE_ID)).minusMinutes(5));
+        orderRepository.deleteAllByDateIsLessThan(LocalDateTime.now(ZoneId.of(ZONE_ID)).minusSeconds(30));
     }
 
     @Override
     @Transactional
     public void merge(@NonNull Order order) {
-        var orderFromBd = orderRepository.findByExchangeAndAssetAndTradeMethodAndTradeType(
+        var orderFromBd = orderRepository.findByExchangeAndAssetAndTradeMethodAndTradeTypeAndUserName(
                 order.getExchange(),
                 order.getAsset(),
                 order.getTradeMethod(),
-                order.getTradeType());
+                order.getTradeType(),
+                order.getUserName());
 
         if (orderFromBd.isPresent()) {
             order.setId(orderFromBd.get().getId());

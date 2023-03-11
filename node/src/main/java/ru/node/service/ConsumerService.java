@@ -3,6 +3,7 @@ package ru.node.service;
 import ru.node.dto.OrderDto;
 import ru.node.dto.SubscribeActionDto;
 import ru.node.dto.UserActionDto;
+import ru.node.dto.UserActionExOrPsDto;
 import ru.node.dto.UserRegisterDto;
 
 public interface ConsumerService {
@@ -12,9 +13,11 @@ public interface ConsumerService {
 
     void consumeTextActionSubscribe(SubscribeActionDto subscribeActionDto);
 
-    void consumeTextActionUserExchange(UserActionDto userActionDto);
+    void consumeTextActionUserExchange(UserActionExOrPsDto userActionExOrPsDto);
 
-    void consumeTextActionUserPaymentSystem(UserActionDto userActionDto);
+    void consumeTextActionUserPaymentSystem(UserActionExOrPsDto userActionExOrPsDto);
 
     void consumeTextRegisterUser(UserRegisterDto userRegisterDto);
+
+    void consumeTextActionUser(UserActionDto userActionDto);
 }

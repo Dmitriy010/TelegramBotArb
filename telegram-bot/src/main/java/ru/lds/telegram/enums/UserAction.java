@@ -5,11 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum SubscribeAction {
+public enum UserAction {
 
-    FIND_ALL("findAll"),
-    DELETE("delete"),
-    DELETE_ALL("deleteAll");
+    FIND_ALL_LIMITS("findAllLimits"),
+    UPDATE_LIMITS("updateLimits");
 
     private final String name;
 }

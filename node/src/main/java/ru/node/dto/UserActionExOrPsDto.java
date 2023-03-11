@@ -1,4 +1,4 @@
-package ru.lds.telegram.dto;
+package ru.node.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,12 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserActionDto {
+@Builder
+public class UserActionExOrPsDto {
 
     private String action;
     private Long userId;
-    private Long limit;
+    private Long id;
 }

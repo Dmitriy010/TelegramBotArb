@@ -20,6 +20,7 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "orders")
+@ToString
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +34,9 @@ public class Order {
 
     private Double price;
 
-    private String transAmount;
+    private Double transAmountMin;
+
+    private Double transAmountMax;
 
     private String tradeMethod;
 

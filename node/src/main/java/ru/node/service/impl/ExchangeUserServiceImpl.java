@@ -1,12 +1,12 @@
 package ru.node.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.node.model.Exchange;
 import ru.node.model.ExchangeUser;
 import ru.node.model.User;
 import ru.node.repository.ExchangeUserRepository;
-import ru.node.service.ExchangeService;
 import ru.node.service.ExchangeUserService;
 
 import java.util.List;
@@ -18,13 +18,14 @@ public class ExchangeUserServiceImpl implements ExchangeUserService {
     private final ExchangeUserRepository exchangeUserRepository;
 
     @Override
-    public void create(List<ExchangeUser> exchangeUserList) {
-        exchangeUserRepository.saveAll(exchangeUserList);
+    @Transactional
+    public void createByUserIdAndExchangeId(Long userId, Long exchangeId) {
+        exchangeUserRepository.save(new ExchangeUser(new User(userId), new Exchange(exchangeId)));
     }
 
     @Override
-    public void deleteByExchangesAndUser(User user, List<Exchange> exchangeList) {
-        exchangeUserRepository.deleteAllByExchangesAndUser(user, exchangeList);
+    public void deleteByUserAndExchangeId(User user, Long exchangeId) {
+        exchangeUserRepository.deleteByUserAndExchange(user, new Exchange(exchangeId));
     }
 
     @Override
@@ -34,6 +35,6 @@ public class ExchangeUserServiceImpl implements ExchangeUserService {
 
     @Override
     public List<ExchangeUser> findAllByUserId(Long userId) {
-        return exchangeUserRepository.findAllByUser(new User(userId));
+        return exchangeUserRepository.findAllByUser(userId);
     }
 }

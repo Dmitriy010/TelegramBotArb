@@ -34,7 +34,7 @@ public class BinanceOrdersScheduler {
         startScheduled(PaymentSystemEnum.QIWI, AssetEnum.USDT, TradeTypeEnum.BUY);
     }
 
-    @Scheduled(fixedRate = 10000, initialDelay = 2000)
+    @Scheduled(fixedRate = 10000, initialDelay = 1500)
     public void scheduledSellUsdt() {
         startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.USDT, TradeTypeEnum.SELL);
         startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.USDT, TradeTypeEnum.SELL);
@@ -43,7 +43,7 @@ public class BinanceOrdersScheduler {
         startScheduled(PaymentSystemEnum.QIWI, AssetEnum.USDT, TradeTypeEnum.SELL);
     }
 
-    @Scheduled(fixedRate = 10000, initialDelay = 4000)
+    @Scheduled(fixedRate = 10000, initialDelay = 3000)
     public void scheduledBuyBtc() {
         startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.BTC, TradeTypeEnum.BUY);
         startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.BTC, TradeTypeEnum.BUY);
@@ -52,7 +52,7 @@ public class BinanceOrdersScheduler {
         startScheduled(PaymentSystemEnum.QIWI, AssetEnum.BTC, TradeTypeEnum.BUY);
     }
 
-    @Scheduled(fixedRate = 10000, initialDelay = 6000)
+    @Scheduled(fixedRate = 10000, initialDelay = 4500)
     public void scheduledSellBtc() {
         startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.BTC, TradeTypeEnum.SELL);
         startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.BTC, TradeTypeEnum.SELL);
@@ -61,7 +61,7 @@ public class BinanceOrdersScheduler {
         startScheduled(PaymentSystemEnum.QIWI, AssetEnum.BTC, TradeTypeEnum.SELL);
     }
 
-    @Scheduled(fixedRate = 10000, initialDelay = 8000)
+    @Scheduled(fixedRate = 10000, initialDelay = 6000)
     public void scheduledBuyEth() {
         startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.ETH, TradeTypeEnum.BUY);
         startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.ETH, TradeTypeEnum.BUY);
@@ -70,7 +70,7 @@ public class BinanceOrdersScheduler {
         startScheduled(PaymentSystemEnum.QIWI, AssetEnum.ETH, TradeTypeEnum.BUY);
     }
 
-    @Scheduled(fixedRate = 10000, initialDelay = 10000)
+    @Scheduled(fixedRate = 10000, initialDelay = 7500)
     public void scheduledSellEth() {
         startScheduled(PaymentSystemEnum.PAYEER, AssetEnum.ETH, TradeTypeEnum.SELL);
         startScheduled(PaymentSystemEnum.SBERBANK, AssetEnum.ETH, TradeTypeEnum.SELL);
@@ -83,7 +83,7 @@ public class BinanceOrdersScheduler {
         CompletableFuture.runAsync(() -> orderService.scheduledOrderBinance(new BinanceBody(
                 Boolean.FALSE,
                 1,
-                5,
+                20,
                 List.of(payMethod.getNameBinance()),
                 Collections.emptyList(),
                 null,

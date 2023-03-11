@@ -126,69 +126,13 @@ public class TelegramButton {
         return markupInLine;
     }
 
-    public ReplyKeyboardMarkup addKeyBoardExchange() {
-        var rowFirst = new KeyboardRow();
-        rowFirst.add("Доступные биржи " + EmojiParser.parseToUnicode("✨"));
-        rowFirst.add("Мои биржи " + EmojiParser.parseToUnicode("⭐"));
-
-        var rowSecond = new KeyboardRow();
-        rowSecond.add("Добавить биржу " + EmojiParser.parseToUnicode("✅"));
-        rowSecond.add("Удалить биржу " + EmojiParser.parseToUnicode("❌"));
-
-        var rowThird = new KeyboardRow();
-        rowThird.add("Удалить все биржи " + EmojiParser.parseToUnicode("❌❌❌"));
-
-        var rowFourth = new KeyboardRow();
-        rowFourth.add("Основное меню " + EmojiParser.parseToUnicode("⏪"));
-
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-        keyboardRows.add(rowFirst);
-        keyboardRows.add(rowSecond);
-        keyboardRows.add(rowThird);
-        keyboardRows.add(rowFourth);
-
-        var keyboardMarkup = new ReplyKeyboardMarkup();
-        keyboardMarkup.setKeyboard(keyboardRows);
-        keyboardMarkup.setResizeKeyboard(Boolean.TRUE);
-
-        return keyboardMarkup;
-    }
-
-    public ReplyKeyboardMarkup addKeyBoardPaymentSystem() {
-        var rowFirst = new KeyboardRow();
-        rowFirst.add("Доступные платежные системы " + EmojiParser.parseToUnicode("💸"));
-        rowFirst.add("Мои платежные системы " + EmojiParser.parseToUnicode("💳"));
-
-        var rowSecond = new KeyboardRow();
-        rowSecond.add("Добавить платежную систему " + EmojiParser.parseToUnicode("✅"));
-        rowSecond.add("Удалить платежную систему " + EmojiParser.parseToUnicode("❌"));
-
-        var rowThird = new KeyboardRow();
-        rowThird.add("Удалить все платежные системы " + EmojiParser.parseToUnicode("❌❌❌"));
-
-        var rowFourth = new KeyboardRow();
-        rowFourth.add("Основное меню " + EmojiParser.parseToUnicode("⏪"));
-
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-        keyboardRows.add(rowFirst);
-        keyboardRows.add(rowSecond);
-        keyboardRows.add(rowThird);
-        keyboardRows.add(rowFourth);
-
-        var keyboardMarkup = new ReplyKeyboardMarkup();
-        keyboardMarkup.setKeyboard(keyboardRows);
-        keyboardMarkup.setResizeKeyboard(Boolean.TRUE);
-
-        return keyboardMarkup;
-    }
-
     public ReplyKeyboardMarkup addKeyBoardsubscribe() {
         var rowFirst = new KeyboardRow();
-        rowFirst.add("Мои подписки " + EmojiParser.parseToUnicode("📋"));
+        rowFirst.add("Добавить подписку " + EmojiParser.parseToUnicode("✅"));
+        rowFirst.add("Мои подписки " + EmojiParser.parseToUnicode("⏰"));
 
         var rowSecond = new KeyboardRow();
-        rowSecond.add("Подписаться на цену " + EmojiParser.parseToUnicode("⏰"));
-        rowSecond.add("Удалить подписку " + EmojiParser.parseToUnicode("❌"));
+        rowSecond.add("Удалить все подписки " + EmojiParser.parseToUnicode("❌❌❌"));
 
         var rowThird = new KeyboardRow();
         rowThird.add("Основное меню " + EmojiParser.parseToUnicode("⏪"));
@@ -208,14 +152,36 @@ public class TelegramButton {
     public ReplyKeyboardMarkup getMainMenu() {
         var rowFirst = new KeyboardRow();
         rowFirst.add("Узнать цену " + EmojiParser.parseToUnicode("💵"));
-        rowFirst.add("Подписки " + EmojiParser.parseToUnicode("⏰"));
+        rowFirst.add("Подписка на цену " + EmojiParser.parseToUnicode("⏰"));
 
-        var rowThird = new KeyboardRow();
-        rowThird.add("Биржи " + EmojiParser.parseToUnicode("⭐"));
-        rowThird.add("Платежные системы " + EmojiParser.parseToUnicode("💳"));
+        var rowSecond = new KeyboardRow();
+        rowSecond.add("Настройки профиля " + EmojiParser.parseToUnicode("📝"));
 
         List<KeyboardRow> keyboardRows = new ArrayList<>();
         keyboardRows.add(rowFirst);
+        keyboardRows.add(rowSecond);
+
+        var keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setKeyboard(keyboardRows);
+        keyboardMarkup.setResizeKeyboard(Boolean.TRUE);
+
+        return keyboardMarkup;
+    }
+
+    public ReplyKeyboardMarkup getProfileMenu() {
+        var rowFirst = new KeyboardRow();
+        rowFirst.add("Мои биржи " + EmojiParser.parseToUnicode("⭐"));
+        rowFirst.add("Мои платежные системы " + EmojiParser.parseToUnicode("💳"));
+
+        var rowSecond= new KeyboardRow();
+        rowSecond.add("Мои лимиты " + EmojiParser.parseToUnicode("💰"));
+
+        var rowThird = new KeyboardRow();
+        rowThird.add("Основное меню " + EmojiParser.parseToUnicode("⏪"));
+
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+        keyboardRows.add(rowFirst);
+        keyboardRows.add(rowSecond);
         keyboardRows.add(rowThird);
 
         var keyboardMarkup = new ReplyKeyboardMarkup();

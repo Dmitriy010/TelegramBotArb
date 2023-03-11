@@ -28,6 +28,7 @@ public class OrderSubscribeScheduler {
                 var orderList = orderService.findAll(OrderSpecification.getFilterOrderSubscribePrice(
                         orderSubscribe.getTradeType(),
                         orderSubscribe.getAsset(),
+                        orderSubscribe.getTransAmountMin(),
                         Arrays.stream(orderSubscribe.getExchange().split(",")).toList(),
                         Arrays.stream(orderSubscribe.getPaymentSystem().split(",")).toList(),
                         orderSubscribe.getPrice()));

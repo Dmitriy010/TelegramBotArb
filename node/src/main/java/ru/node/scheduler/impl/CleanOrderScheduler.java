@@ -14,7 +14,7 @@ public class CleanOrderScheduler {
 
     private final OrderService orderService;
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 15000, initialDelay = 7500)
     public void scheduledCleanOrder() {
         orderService.deleteOldOrders();
     }

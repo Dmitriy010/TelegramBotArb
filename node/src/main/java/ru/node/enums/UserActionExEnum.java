@@ -9,7 +9,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Getter
-public enum UserActionPSEnum {
+public enum UserActionExEnum {
 
     FIND_ALL("findAll"),
     DELETE("delete"),
@@ -18,14 +18,14 @@ public enum UserActionPSEnum {
 
     private final String name;
 
-    private static final Map<String, UserActionPSEnum> mapUserAction = new HashMap<>();
+    private static final Map<String, UserActionExEnum> mapUserAction = new HashMap<>();
 
     static {
-        Arrays.stream(UserActionPSEnum.values())
+        Arrays.stream(UserActionExEnum.values())
                 .forEach(userActionExEnum -> mapUserAction.put(userActionExEnum.getName(), userActionExEnum));
     }
 
-    public static UserActionPSEnum getByName(String name){
+    public static UserActionExEnum getByName(String name){
         return mapUserAction.get(name);
     }
 }

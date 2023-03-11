@@ -10,4 +10,6 @@ import java.util.List;
 public interface OrderSubscribeRepository extends JpaRepository<OrderSubscribe, Long> {
 
     List<OrderSubscribe> findAllByUserId(Long userId);
+
+    void deleteAllByUserId(Long userId);
 }

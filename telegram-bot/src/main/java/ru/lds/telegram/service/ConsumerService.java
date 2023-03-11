@@ -12,5 +12,7 @@ public interface ConsumerService {
 
     void consumeUserActionExchange(SendMessage sendMessage);
 
+    void consumeUserAction(SendMessage sendMessage);
+
     void consumeUserActionPaymentSystem(SendMessage sendMessage);
 }

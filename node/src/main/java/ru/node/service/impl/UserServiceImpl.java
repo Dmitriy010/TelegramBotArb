@@ -23,14 +23,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void create(UserRegisterDto userRegisterDto) {
-        var user = userRepository.findByUserName(userRegisterDto.getUserName());
-
-        if (user.isEmpty()) {
-            var newUser = userMapper.userRegisterDtoToUser(userRegisterDto);
-            newUser.setDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
-            userRepository.save(newUser);
-        }
+    public User create(UserRegisterDto userRegisterDto) {
+        var newUser = userMapper.userRegisterDtoToUser(userRegisterDto);
+        newUser.setDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        return userRepository.save(newUser);
     }
 
     @Override
@@ -38,5 +34,10 @@ public class UserServiceImpl implements UserService {
         var user = userRepository.findByUserId(userId);
 
         return user.orElse(null);
+    }
+
+    @Override
+    public User findByUserName(String username) {
+        return userRepository.findByUserName(username);
     }
 }

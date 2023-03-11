@@ -59,4 +59,12 @@ public class RabbitConfiguration {
     public Queue textAnswerUserRegisterQueue() {
         return new Queue("answer_register_user");
     }
+    @Bean
+    public Queue textActionUserQueue() {
+        return new Queue("text_action_user");
+    }
+    @Bean
+    public Queue textAnswerUserActionQueue() {
+        return new Queue("answer_action_user");
+    }
 }

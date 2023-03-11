@@ -21,7 +21,6 @@
 	<properties>
 		<java.version>17</java.version>
 		<telegrambots-spring-boot-starter.version>6.1.0</telegrambots-spring-boot-starter.version>
-		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<spring-boot-maven-plugin.version>3.0.2</spring-boot-maven-plugin.version>
 		<lombok.version>1.18.20</lombok.version>
 		<maven-compiler-plugin.version>0.2.0</maven-compiler-plugin.version>

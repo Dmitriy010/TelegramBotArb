@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserActionDto {
+public class UserActionExOrPsDto {
 
     private String action;
     private Long userId;
-    private Long limit;
+    private Long id;
 }

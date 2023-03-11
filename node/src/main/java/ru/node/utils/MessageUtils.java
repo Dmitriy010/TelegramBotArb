@@ -20,9 +20,6 @@ public class MessageUtils {
                 "Подписка" +
                 EmojiParser.parseToUnicode("📋📋📋") +
                 "\n" +
-                "Идентификатор: " +
-                orderSubscribe.getId() +
-                "\n" +
                 "Дата: " +
                 orderSubscribe.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")) +
                 "\n" +
@@ -42,6 +39,9 @@ public class MessageUtils {
                 "\n" +
                 "Платежная система: " +
                 orderSubscribe.getPaymentSystem() +
+                "\n" +
+                "Лимит от: " +
+                orderSubscribe.getTransAmountMin() + " " + FIAT_RUB +
                 "\n" +
                 "<------------------------------>";
     }
@@ -52,9 +52,6 @@ public class MessageUtils {
                 "Подписка оформлена" +
                 EmojiParser.parseToUnicode("❗❗❗") +
                 "\n" +
-                "Идентификатор: " +
-                orderSubscribe.getId() +
-                "\n" +
                 "Дата: " +
                 orderSubscribe.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")) +
                 "\n" +
@@ -74,6 +71,9 @@ public class MessageUtils {
                 "\n" +
                 "Платежная система: " +
                 orderSubscribe.getPaymentSystem() +
+                "\n" +
+                "Лимит от: " +
+                orderSubscribe.getTransAmountMin() + " " + FIAT_RUB +
                 "\n" +
                 "<------------------------------>";
     }
@@ -106,7 +106,7 @@ public class MessageUtils {
                 order.getAsset() +
                 "\n" +
                 "Лимит: " +
-                order.getTransAmount() +
+                order.getTransAmountMin() + " - " + order.getTransAmountMax() +
                 " " +
                 order.getFiat() +
                 "\n" +
@@ -156,7 +156,7 @@ public class MessageUtils {
                 order.getAsset() +
                 "\n" +
                 "Лимит: " +
-                order.getTransAmount() +
+                order.getTransAmountMin() + " - " + order.getTransAmountMax() +
                 " " +
                 order.getFiat() +
                 "\n" +

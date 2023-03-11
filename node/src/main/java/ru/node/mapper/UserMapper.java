@@ -14,5 +14,6 @@ public interface UserMapper {
     @Mapping(target = "date", ignore = true)
     @Mapping(target = "exchangeUserList", ignore = true)
     @Mapping(target = "paymentSystemUserList", ignore = true)
+    @Mapping(target = "limitUser", ignore = true)
     User userRegisterDtoToUser(@NonNull UserRegisterDto userRegisterDto);
 }

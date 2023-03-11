@@ -16,14 +16,14 @@ import java.util.List;
 public interface ExchangeUserRepository extends JpaRepository<ExchangeUser, Long> {
     @Query("SELECT exchu FROM ExchangeUser exchu " +
             "JOIN FETCH exchu.exchange " +
-            "WHERE exchu.user = :user")
-    List<ExchangeUser> findAllByUser(@Param("user") User user);
+            "WHERE exchu.user.userId = :userId")
+    List<ExchangeUser> findAllByUser(@Param("userId") Long userId);
 
     @Transactional
     void deleteAllByUser(User user);
 
-    @Query("DELETE from ExchangeUser exs WHERE exs.user = :user AND exs.exchange IN (:exchangeList)")
+    @Query("DELETE from ExchangeUser exs WHERE exs.user = :user AND exs.exchange = :exchange")
     @Modifying
     @Transactional
-    void deleteAllByExchangesAndUser(@Param("user") User user, @Param("exchangeList") List<Exchange> exchangeList);
+    void deleteByUserAndExchange(@Param("user") User user, @Param("exchange") Exchange exchange);
 }

@@ -1,7 +1,7 @@
 package ru.node.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import ru.node.dto.OrderDto;
 import ru.node.mapper.OrderMapper;
@@ -23,9 +23,10 @@ public class OrderSubscribeServiceImpl implements OrderSubscribeService {
     private final OrderMapper orderMapper;
 
     @Override
-    public OrderSubscribe create(OrderDto orderSubscribeDto) {
+    public OrderSubscribe create(OrderDto orderSubscribeDto, Double limit) {
         var orderSubscribe = orderMapper.ordertoToOrderSubscribe(orderSubscribeDto);
         orderSubscribe.setDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        orderSubscribe.setTransAmountMin(limit);
 
         return orderSubscribeRepository.save(orderSubscribe);
     }
@@ -41,12 +42,13 @@ public class OrderSubscribeServiceImpl implements OrderSubscribeService {
     }
 
     @Override
-    public Boolean deleteById(Long id) {
-        try {
-            orderSubscribeRepository.deleteById(id);
-            return Boolean.TRUE;
-        } catch (EmptyResultDataAccessException e) {
-            return Boolean.FALSE;
-        }
+    public void deleteById(Long id) {
+        orderSubscribeRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllByUserId(Long userId) {
+        orderSubscribeRepository.deleteAllByUserId(userId);
     }
 }

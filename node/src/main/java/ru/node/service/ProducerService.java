@@ -12,4 +12,6 @@ public interface ProducerService {
     void producerAnswerActionUserExchange(SendMessage sendMessage);
 
     void producerAnswerActionUserPaymentSystem(SendMessage sendMessage);
+
+    void producerAnswerActionUser(SendMessage sendMessage);
 }
