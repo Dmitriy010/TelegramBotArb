@@ -1,5 +1,6 @@
 package ru.node.service.impl;
 
+import io.micrometer.core.annotation.Timed;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @Timed("createUser")
     public User create(UserRegisterDto userRegisterDto) {
         var newUser = userMapper.userRegisterDtoToUser(userRegisterDto);
         newUser.setDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
@@ -30,6 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Timed("findUserByUserId")
     public User findByUserId(Long userId) {
         var user = userRepository.findByUserId(userId);
 
@@ -37,6 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Timed("findUserByUserName")
     public User findByUserName(String username) {
         return userRepository.findByUserName(username);
     }

@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    void merge(@NonNull Order order);
+    void create(@NonNull List<Order> orderList);
 
     List<Order> findAll(Specification<Order> specification);
 
@@ -22,5 +22,8 @@ public interface OrderService {
                              @NonNull AssetEnum assetEnum,
                              @NonNull TradeTypeEnum tradeTypeEnum);
 
-    void deleteOldOrders();
+    void deleteAllByExchangeAndAssetAndTradeMethodAndTradeType(@NonNull String exchange,
+                                                               @NonNull String asset,
+                                                               @NonNull String tradeMethod,
+                                                               @NonNull String tradeType);
 }

@@ -1,5 +1,6 @@
 package ru.node.service.impl;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.node.model.LimitUser;
@@ -13,16 +14,19 @@ public class LimitUserServiceImpl implements LimitUserService {
     private final LimitUserRepository limitUserRepository;
 
     @Override
+    @Timed("createUserLimit")
     public void create(LimitUser limitUser) {
         limitUserRepository.save(limitUser);
     }
 
     @Override
+    @Timed("updateUserLimit")
     public void update(LimitUser limitUser) {
         limitUserRepository.save(limitUser);
     }
 
     @Override
+    @Timed("getUserLimit")
     public LimitUser findByUserId(Long userId) {
         return limitUserRepository.findByUserId(userId);
     }

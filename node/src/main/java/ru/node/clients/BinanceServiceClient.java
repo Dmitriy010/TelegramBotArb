@@ -1,5 +1,6 @@
 package ru.node.clients;
 
+import io.micrometer.core.annotation.Timed;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,5 +15,6 @@ public interface BinanceServiceClient {
     @PostMapping(path = "", headers = {
             "Host=p2p.binance.com",
             "Origin=https://p2p.binance.com"})
+    @Timed("getOrdersBinance")
     ResponseEntity<BinanceResponse> getOrders(@RequestBody BinanceBody binanceBody);
 }

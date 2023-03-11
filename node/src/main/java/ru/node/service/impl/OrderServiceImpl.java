@@ -1,5 +1,6 @@
 package ru.node.service.impl;
 
+import io.micrometer.core.annotation.Timed;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,8 +17,6 @@ import ru.node.model.Order;
 import ru.node.repository.OrderRepository;
 import ru.node.service.OrderService;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 
 import static ru.node.constants.Constants.BALANCE;
 import static ru.node.constants.Constants.FIAT_RUB;
-import static ru.node.constants.Constants.ZONE_ID;
 
 @Component
 @RequiredArgsConstructor
@@ -63,7 +61,14 @@ public class OrderServiceImpl implements OrderService {
 
                 var binanceOrderList = orderMapper.binanceDataToOrder(binanceData);
 
-                binanceOrderList.forEach(this::merge);
+                var newOrder = binanceOrderList.get(0);
+                deleteAllByExchangeAndAssetAndTradeMethodAndTradeType(
+                        newOrder.getExchange(),
+                        newOrder.getAsset(),
+                        newOrder.getTradeMethod(),
+                        newOrder.getTradeType());
+
+                create(binanceOrderList);
             }
         }
     }
@@ -118,36 +123,34 @@ public class OrderServiceImpl implements OrderService {
                     order.setTradeMethod(payMethod.getName());
                 });
 
-                huobiOrderList.forEach(this::merge);
+                var newOrder = huobiOrderList.get(0);
+                deleteAllByExchangeAndAssetAndTradeMethodAndTradeType(
+                        newOrder.getExchange(),
+                        newOrder.getAsset(),
+                        newOrder.getTradeMethod(),
+                        newOrder.getTradeType());
+
+                create(huobiOrderList);
             }
         }
     }
 
     @Override
-    @Transactional
-    public void deleteOldOrders() {
-        orderRepository.deleteAllByDateIsLessThan(LocalDateTime.now(ZoneId.of(ZONE_ID)).minusSeconds(30));
+    public void deleteAllByExchangeAndAssetAndTradeMethodAndTradeType(@NonNull String exchange,
+                                                                      @NonNull String asset,
+                                                                      @NonNull String tradeMethod,
+                                                                      @NonNull String tradeType) {
+        orderRepository.deleteAllByExchangeAndAssetAndTradeMethodAndTradeType(exchange, asset, tradeMethod, tradeType);
     }
 
     @Override
     @Transactional
-    public void merge(@NonNull Order order) {
-        var orderFromBd = orderRepository.findByExchangeAndAssetAndTradeMethodAndTradeTypeAndUserName(
-                order.getExchange(),
-                order.getAsset(),
-                order.getTradeMethod(),
-                order.getTradeType(),
-                order.getUserName());
-
-        if (orderFromBd.isPresent()) {
-            order.setId(orderFromBd.get().getId());
-            orderRepository.save(order);
-        } else {
-            orderRepository.save(order);
-        }
+    public void create(@NonNull List<Order> orderList) {
+        orderRepository.saveAll(orderList);
     }
 
     @Override
+    @Timed("getOrderInfo")
     public List<Order> findAll(Specification<Order> specification) {
         return orderRepository.findAll(specification);
     }

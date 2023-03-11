@@ -1,5 +1,6 @@
 package ru.node.clients;
 
+import io.micrometer.core.annotation.Timed;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,5 +16,6 @@ public interface HuobiServiceClient {
             "Host=otc-api.trygofast.com",
             "Origin=https://www.huobi.com",
             "Refer=https://www.huobi.com/"})
+    @Timed("getOrdersHuobi")
     ResponseEntity<HuobiResponse> getOrders(@RequestParam Map<String, String> allParams);
 }
