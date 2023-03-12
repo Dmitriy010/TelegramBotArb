@@ -14,7 +14,6 @@ public class LimitUserServiceImpl implements LimitUserService {
     private final LimitUserRepository limitUserRepository;
 
     @Override
-    @Timed("createUserLimit")
     public void create(LimitUser limitUser) {
         limitUserRepository.save(limitUser);
     }

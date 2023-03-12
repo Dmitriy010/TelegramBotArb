@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Timed("findUserByUserId")
     public User findByUserId(Long userId) {
         var user = userRepository.findByUserId(userId);
 
@@ -40,7 +39,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Timed("findUserByUserName")
     public User findByUserName(String username) {
         return userRepository.findByUserName(username);
     }
