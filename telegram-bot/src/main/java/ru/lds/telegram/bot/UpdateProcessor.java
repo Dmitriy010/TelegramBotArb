@@ -8,19 +8,15 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.lds.telegram.cache.DataCache;
 import ru.lds.telegram.dto.OrderDto;
-import ru.lds.telegram.dto.SubscribeActionDto;
+import ru.lds.telegram.dto.UserActionLimitDto;
 import ru.lds.telegram.dto.UserActionDto;
-import ru.lds.telegram.dto.UserActionExOrPsDto;
 import ru.lds.telegram.dto.UserRegisterDto;
-import ru.lds.telegram.enums.Asset;
-import ru.lds.telegram.enums.BotState;
-import ru.lds.telegram.enums.Exchange;
-import ru.lds.telegram.enums.PaymentSystem;
-import ru.lds.telegram.enums.SubscribeAction;
-import ru.lds.telegram.enums.TradeType;
-import ru.lds.telegram.enums.UserAction;
-import ru.lds.telegram.enums.UserActionExchange;
-import ru.lds.telegram.enums.UserActionPaymentSystem;
+import ru.lds.telegram.enums.AssetEnum;
+import ru.lds.telegram.enums.BotStateEnum;
+import ru.lds.telegram.enums.ExchangeEnum;
+import ru.lds.telegram.enums.PaymentSystemEnum;
+import ru.lds.telegram.enums.TradeTypeEnum;
+import ru.lds.telegram.enums.UserActionEnum;
 import ru.lds.telegram.service.ProducerService;
 
 import java.util.Objects;
@@ -47,14 +43,14 @@ public class UpdateProcessor {
             //Смена статуса бота для пользователя
             checkStartMessageAndChangeStatus(userId, messageText);
             //Регистрация пользователя
-            if (dataCache.getUserCurrentBotState(userId).equals(BotState.START)) {
+            if (dataCache.getUserCurrentBotState(userId).equals(BotStateEnum.START)) {
                 var updateMessage = update.getMessage();
                 var userRegisterDto = new UserRegisterDto(
                         updateMessage.getChatId(),
                         updateMessage.getFrom().getFirstName(),
                         updateMessage.getFrom().getLastName(),
                         updateMessage.getFrom().getUserName());
-                producerService.produceUserRegister("text_register_user", userRegisterDto);
+                producerService.produceUserRegister("register_user", userRegisterDto);
 
                 var message = new SendMessage(userId.toString(), "Выберите действие: ");
                 message.setReplyMarkup(telegramButton.getMainMenu());
@@ -70,98 +66,98 @@ public class UpdateProcessor {
         var userId = update.getCallbackQuery().getMessage().getChatId();
         var callbackData = update.getCallbackQuery().getData();
         switch (dataCache.getUserCurrentBotState(userId)) {
-            case ASSET -> {
-                var orderDto = dataCache.getCurrentUserMessage(userId);
-                orderDto.setAsset(Asset.valueOf(callbackData).name());
-                dataCache.setCurrentUserMessage(userId, orderDto);
+            case CHOOSE_ASSET -> {
+                var orderDto = dataCache.getCurrentOrderDtoByUserId(userId);
+                orderDto.setAsset(AssetEnum.valueOf(callbackData).name());
+                dataCache.setCurrentOrderDtoByUserId(userId, orderDto);
 
                 var message = new SendMessage(userId.toString(), "Выберите биржу: ");
                 message.setReplyMarkup(telegramButton.getKeyBoardExchange());
                 telegramBot.sendAnswerMessage(message);
 
-                dataCache.setUserCurrentBotState(userId, BotState.EXCHANGE);
+                dataCache.setUserCurrentBotState(userId, BotStateEnum.CHOOSE_EXCHANGE);
             }
-            case EXCHANGE -> {
-                var orderDto = dataCache.getCurrentUserMessage(userId);
-                orderDto.setExchange(Exchange.getByName(callbackData).getName());
-                dataCache.setCurrentUserMessage(userId, orderDto);
+            case CHOOSE_EXCHANGE -> {
+                var orderDto = dataCache.getCurrentOrderDtoByUserId(userId);
+                orderDto.setExchange(ExchangeEnum.getByName(callbackData).getName());
+                dataCache.setCurrentOrderDtoByUserId(userId, orderDto);
 
                 var message = new SendMessage(userId.toString(), "Выберите платежную систему: ");
                 message.setReplyMarkup(telegramButton.getKeyBoardPaymentSystem());
                 telegramBot.sendAnswerMessage(message);
 
-                dataCache.setUserCurrentBotState(userId, BotState.PAYMENT_SYSTEM);
+                dataCache.setUserCurrentBotState(userId, BotStateEnum.CHOOSE_PAYMENT_SYSTEM);
             }
-            case PAYMENT_SYSTEM -> {
-                var orderDto = dataCache.getCurrentUserMessage(userId);
-                orderDto.setPaymentSystem(PaymentSystem.valueOf(callbackData).getName());
-                dataCache.setCurrentUserMessage(userId, orderDto);
+            case CHOOSE_PAYMENT_SYSTEM -> {
+                var orderDto = dataCache.getCurrentOrderDtoByUserId(userId);
+                orderDto.setPaymentSystem(PaymentSystemEnum.valueOf(callbackData).getName());
+                dataCache.setCurrentOrderDtoByUserId(userId, orderDto);
 
                 var message = new SendMessage(userId.toString(), "Выберите тип сделки: ");
                 message.setReplyMarkup(telegramButton.getKeyBoardTradeType());
                 telegramBot.sendAnswerMessage(message);
 
-                dataCache.setUserCurrentBotState(userId, BotState.TRADE_TYPE);
+                dataCache.setUserCurrentBotState(userId, BotStateEnum.CHOOSE_TRADE_TYPE);
             }
-            case TRADE_TYPE -> {
-                var orderDto = dataCache.getCurrentUserMessage(userId);
-                orderDto.setTradeType(TradeType.valueOf(callbackData).name());
-                dataCache.setCurrentUserMessage(userId, orderDto);
+            case CHOOSE_TRADE_TYPE -> {
+                var orderDto = dataCache.getCurrentOrderDtoByUserId(userId);
+                orderDto.setTradeType(TradeTypeEnum.valueOf(callbackData).name());
+                dataCache.setCurrentOrderDtoByUserId(userId, orderDto);
 
                 if (Objects.nonNull(orderDto.getPrice())) {
                     var message = new SendMessage(userId.toString(), "Введите цену для подписки: ");
                     telegramBot.sendAnswerMessage(message);
 
-                    dataCache.setUserCurrentBotState(userId, BotState.PRICE);
+                    dataCache.setUserCurrentBotState(userId, BotStateEnum.CHOOSE_PRICE);
                 } else {
-                    producerService.produceOrderInfo("text_message_order_info", orderDto);
-                    dataCache.setUserCurrentBotState(userId, BotState.START);
-                    dataCache.deleteUserMessage(userId);
+                    producerService.produceOrderInfo("order_info", orderDto);
+                    dataCache.setUserCurrentBotState(userId, BotStateEnum.START);
+                    dataCache.deleteOrderDtoByUserId(userId);
                 }
             }
-            case ACTION_MY_EXCHANGES -> {
+            case ACTION_EXCHANGE -> {
                 var action = callbackData.split(",");
-                producerService.produceUserActionExOrPs("text_action_user_exchange",
-                        UserActionExOrPsDto.builder()
-                                .action(action[0])
-                                .userId(userId)
-                                .id(Long.parseLong(action[1]))
-                                .build());
-
-                dataCache.setUserCurrentBotState(userId, BotState.ACTION_MY_EXCHANGES);
-            }
-            case ACTION_MY_PAYMENT_SYSTEM -> {
-                var action = callbackData.split(",");
-                producerService.produceUserActionExOrPs("text_action_user_payment_system",
-                        UserActionExOrPsDto.builder()
-                                .action(action[0])
-                                .userId(userId)
-                                .id(Long.parseLong(action[1]))
-                                .build());
-
-                dataCache.setUserCurrentBotState(userId, BotState.ACTION_MY_PAYMENT_SYSTEM);
-            }
-            case ACTION_MY_LIMITS -> {
-                var action = callbackData.split(",");
-                producerService.produceUserAction("text_action_user",
+                producerService.produceUserAction("exchange",
                         UserActionDto.builder()
+                                .action(action[0])
+                                .userId(userId)
+                                .id(Long.parseLong(action[1]))
+                                .build());
+
+                dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_EXCHANGE);
+            }
+            case ACTION_PAYMENT_SYSTEM -> {
+                var action = callbackData.split(",");
+                producerService.produceUserAction("payment_system",
+                        UserActionDto.builder()
+                                .action(action[0])
+                                .userId(userId)
+                                .id(Long.parseLong(action[1]))
+                                .build());
+
+                dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_PAYMENT_SYSTEM);
+            }
+            case ACTION_LIMIT -> {
+                var action = callbackData.split(",");
+                producerService.produceUserActionLimit("limit",
+                        UserActionLimitDto.builder()
                                 .action(action[0])
                                 .userId(userId)
                                 .limit(Long.parseLong(action[1]))
                                 .build());
 
-                dataCache.setUserCurrentBotState(userId, BotState.ACTION_MY_LIMITS);
+                dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_LIMIT);
             }
-            case ACTION_SUBSCRIBES -> {
+            case ACTION_SUBSCRIBE -> {
                 var action = callbackData.split(",");
-                producerService.produceSubscribeAction("text_action_subscribe",
-                        SubscribeActionDto.builder()
+                producerService.produceUserAction("subscribe",
+                        UserActionDto.builder()
                                 .action(action[0])
                                 .userId(userId)
-                                .subscribeId(Long.parseLong(action[1]))
+                                .id(Long.parseLong(action[1]))
                                 .build());
 
-                dataCache.setUserCurrentBotState(userId, BotState.ACTION_SUBSCRIBES);
+                dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_SUBSCRIBE);
             }
         }
     }
@@ -173,135 +169,128 @@ public class UpdateProcessor {
                 message.setReplyMarkup(telegramButton.getProfileMenu());
                 telegramBot.sendAnswerMessage(message);
 
-                dataCache.setUserCurrentBotState(userId, BotState.ACTION_PROFILE);
+                dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_PROFILE);
             }
-            case ACTION_PROFILE, ACTION_MY_EXCHANGES, ACTION_MY_PAYMENT_SYSTEM, ACTION_MY_LIMITS -> {
+            case ACTION_PROFILE, ACTION_EXCHANGE, ACTION_PAYMENT_SYSTEM, ACTION_LIMIT -> {
                 if (messageText.contains("Мои биржи")) {
                     var message = new SendMessage(userId.toString(), "Управление биржами " + EmojiParser.parseToUnicode("✨"));
                     telegramBot.sendAnswerMessage(message);
-                    producerService.produceUserActionExOrPs("text_action_user_exchange",
-                            UserActionExOrPsDto.builder()
-                                    .action(UserActionExchange.FIND_ALL.getName())
+                    producerService.produceUserAction("exchange",
+                            UserActionDto.builder()
+                                    .action(UserActionEnum.FIND_ALL.getName())
                                     .userId(userId)
                                     .build());
-                    dataCache.setUserCurrentBotState(userId, BotState.ACTION_MY_EXCHANGES);
+                    dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_EXCHANGE);
                 } else if (messageText.contains("Мои платежные системы")) {
                     var message = new SendMessage(userId.toString(), "Управление платежными системами " + EmojiParser.parseToUnicode("💸"));
                     telegramBot.sendAnswerMessage(message);
-                    producerService.produceUserActionExOrPs("text_action_user_payment_system",
-                            UserActionExOrPsDto.builder()
-                                    .action(UserActionPaymentSystem.FIND_ALL.getName())
+                    producerService.produceUserAction("payment_system",
+                            UserActionDto.builder()
+                                    .action(UserActionEnum.FIND_ALL.getName())
                                     .userId(userId)
                                     .build());
-                    dataCache.setUserCurrentBotState(userId, BotState.ACTION_MY_PAYMENT_SYSTEM);
+                    dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_PAYMENT_SYSTEM);
                 } else if (messageText.contains("Мои лимиты")) {
                     var message = new SendMessage(userId.toString(), "Управление лимитами");
                     telegramBot.sendAnswerMessage(message);
-                    producerService.produceUserAction("text_action_user",
-                            UserActionDto.builder()
-                                    .action(UserAction.FIND_ALL_LIMITS.getName())
+                    producerService.produceUserActionLimit("limit",
+                            UserActionLimitDto.builder()
+                                    .action(UserActionEnum.FIND_ALL.getName())
                                     .userId(userId)
                                     .build());
 
-                    dataCache.setUserCurrentBotState(userId, BotState.ACTION_MY_LIMITS);
+                    dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_LIMIT);
                 } else if (messageText.contains("Основное меню")) {
                     var message = new SendMessage(userId.toString(), "Выберите действие: ");
                     message.setReplyMarkup(telegramButton.getMainMenu());
                     telegramBot.sendAnswerMessage(message);
-                    dataCache.setUserCurrentBotState(userId, BotState.START);
+                    dataCache.setUserCurrentBotState(userId, BotStateEnum.START);
                 }
             }
             //subscribe cases
-            case CHECK_SUBSCRIBES -> {
+            case CHECK_SUBSCRIBE -> {
                 var message = new SendMessage(userId.toString(), "Выберите действие");
-                message.setReplyMarkup(telegramButton.addKeyBoardsubscribe());
+                message.setReplyMarkup(telegramButton.addKeyBoardSubscribe());
                 telegramBot.sendAnswerMessage(message);
 
-                dataCache.setUserCurrentBotState(userId, BotState.ACTION_SUBSCRIBES);
+                dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_SUBSCRIBE);
             }
-            case ACTION_SUBSCRIBES -> {
+            case ACTION_SUBSCRIBE -> {
                 if (messageText.contains("Мои подписки")) {
-                    producerService.produceSubscribeAction("text_action_subscribe",
-                            SubscribeActionDto.builder()
-                                    .action(SubscribeAction.FIND_ALL.getName())
+                    producerService.produceUserAction("subscribe",
+                            UserActionDto.builder()
+                                    .action(UserActionEnum.FIND_ALL.getName())
                                     .userId(userId)
                                     .build());
 
-                    dataCache.setUserCurrentBotState(userId, BotState.ACTION_SUBSCRIBES);
-                }
-                if (messageText.contains("Удалить подписку")) {
-                    var message = new SendMessage(userId.toString(),
-                            "Введите идентификатор подписки или идентификаторы подписок через запятую" + EmojiParser.parseToUnicode("⏰"));
-                    telegramBot.sendAnswerMessage(message);
-
-                    dataCache.setUserCurrentBotState(userId, BotState.DELETE_SUBSCRIBE);
+                    dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_SUBSCRIBE);
                 }
                 if (messageText.contains("Удалить все подписки")) {
-                    producerService.produceSubscribeAction("text_action_subscribe",
-                            SubscribeActionDto.builder()
-                                    .action(SubscribeAction.DELETE_ALL.getName())
+                    producerService.produceUserAction("subscribe",
+                            UserActionDto.builder()
+                                    .action(UserActionEnum.DELETE_ALL.getName())
                                     .userId(userId)
                                     .build());
 
-                    dataCache.setUserCurrentBotState(userId, BotState.ACTION_SUBSCRIBES);
+                    dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_SUBSCRIBE);
                 }
                 if (messageText.contains("Добавить подписку")) {
-                    dataCache.deleteUserMessage(userId);
+                    dataCache.deleteOrderDtoByUserId(userId);
                     var orderDto = new OrderDto(userId);
                     orderDto.setPrice(0.0);
-                    dataCache.setCurrentUserMessage(userId, orderDto);
+                    dataCache.setCurrentOrderDtoByUserId(userId, orderDto);
 
                     var message = new SendMessage(userId.toString(), "Выберите криптовалюту: ");
                     message.setReplyMarkup(telegramButton.getKeyBoardAssetType());
                     telegramBot.sendAnswerMessage(message);
 
-                    dataCache.setUserCurrentBotState(userId, BotState.ASSET);
+                    dataCache.setUserCurrentBotState(userId, BotStateEnum.CHOOSE_ASSET);
                 }
             }
-            case PRICE -> {
+            case CHOOSE_PRICE -> {
                 try {
                     var price = Double.parseDouble(messageText);
-                    var orderDto = dataCache.getCurrentUserMessage(userId);
+                    var orderDto = dataCache.getCurrentOrderDtoByUserId(userId);
                     orderDto.setPrice(price);
-                    dataCache.setCurrentUserMessage(userId, orderDto);
-                    producerService.produceOrderInfo("text_message_subscribe", orderDto);
+                    dataCache.setCurrentOrderDtoByUserId(userId, orderDto);
+                    producerService.produceOrderInfo("create_subscribe", orderDto);
 
-                    dataCache.setUserCurrentBotState(userId, BotState.ACTION_SUBSCRIBES);
-                    dataCache.deleteUserMessage(userId);
+                    dataCache.setUserCurrentBotState(userId, BotStateEnum.ACTION_SUBSCRIBE);
+                    dataCache.deleteOrderDtoByUserId(userId);
                 } catch (NumberFormatException e) {
                     telegramBot.sendAnswerMessage(new SendMessage(userId.toString(), "Введите числовое значение!"));
                 }
             }
-            case CHECK_COST -> {
+            case CHECK_ORDER -> {
                 var message = new SendMessage(userId.toString(), "Выберите криптовалюту: ");
                 message.setReplyMarkup(telegramButton.getKeyBoardAssetType());
                 telegramBot.sendAnswerMessage(message);
 
-                dataCache.setUserCurrentBotState(userId, BotState.ASSET);
+                dataCache.setUserCurrentBotState(userId, BotStateEnum.CHOOSE_ASSET);
             }
         }
     }
 
     private void checkStartMessageAndChangeStatus(Long userId, String messageText) {
         if (messageText.contains("/start")) {
-            dataCache.deleteUserMessage(userId);
-            dataCache.setUserCurrentBotState(userId, BotState.START);
+            dataCache.deleteOrderDtoByUserId(userId);
+            dataCache.setUserCurrentBotState(userId, BotStateEnum.START);
         }
         if (messageText.contains("Узнать цену")) {
-            dataCache.deleteUserMessage(userId);
-            dataCache.setCurrentUserMessage(userId, new OrderDto(userId));
-            dataCache.setUserCurrentBotState(userId, BotState.CHECK_COST);
+            dataCache.deleteOrderDtoByUserId(userId);
+            dataCache.setCurrentOrderDtoByUserId(userId, new OrderDto(userId));
+            dataCache.setUserCurrentBotState(userId, BotStateEnum.CHECK_ORDER);
         }
         if (messageText.contains("Подписка на цену")) {
-            dataCache.setUserCurrentBotState(userId, BotState.CHECK_SUBSCRIBES);
+            dataCache.setUserCurrentBotState(userId, BotStateEnum.CHECK_SUBSCRIBE);
         }
         if (messageText.contains("Настройки профиля")) {
-            dataCache.deleteUserMessage(userId);
-            dataCache.setUserCurrentBotState(userId, BotState.SETTINGS_PROFILE);
+            dataCache.deleteOrderDtoByUserId(userId);
+            dataCache.setUserCurrentBotState(userId, BotStateEnum.SETTINGS_PROFILE);
         }
         if (messageText.contains("Основное меню")) {
-            dataCache.deleteUserMessage(userId);
-            dataCache.setUserCurrentBotState(userId, BotState.START);
+            dataCache.deleteOrderDtoByUserId(userId);
+            dataCache.setUserCurrentBotState(userId, BotStateEnum.START);
         }
     }
 

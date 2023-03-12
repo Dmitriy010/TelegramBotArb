@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.node.enums.AssetEnum;
-import ru.node.enums.ExchangeEnum;
 import ru.node.enums.PaymentSystemEnum;
 import ru.node.enums.TradeTypeEnum;
 import ru.node.service.OrderService;
@@ -74,14 +73,10 @@ public class HuobiOrdersScheduler {
     }
 
     private void startScheduled(PaymentSystemEnum payMethod, AssetEnum assetEnum, TradeTypeEnum tradeTypeEnum) {
-        CompletableFuture.runAsync(() -> orderService.scheduledOrderHuobi(payMethod, assetEnum, tradeTypeEnum)).exceptionally((e) -> {
-            log.error("!-----" +
-                    ExchangeEnum.HUOBI.getName() + " -> " +
-                    payMethod.getNameHuobi() + " -> " +
-                    assetEnum.getNameHuobi() + " -> " +
-                    tradeTypeEnum.getNameHuobi() + "-----!");
-            log.error(e.getMessage(), e);
-            return null;
-        });
+        CompletableFuture.runAsync(() -> orderService.scheduledOrderHuobi(payMethod, assetEnum, tradeTypeEnum))
+                .exceptionally((e) -> {
+                    log.error(e.getMessage(), e);
+                    return null;
+                });
     }
 }

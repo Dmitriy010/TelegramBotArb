@@ -5,9 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import ru.lds.telegram.dto.OrderDto;
-import ru.lds.telegram.dto.SubscribeActionDto;
+import ru.lds.telegram.dto.UserActionLimitDto;
 import ru.lds.telegram.dto.UserActionDto;
-import ru.lds.telegram.dto.UserActionExOrPsDto;
 import ru.lds.telegram.dto.UserRegisterDto;
 import ru.lds.telegram.service.ProducerService;
 
@@ -24,18 +23,13 @@ public class ProducerServiceImpl implements ProducerService {
     }
 
     @Override
-    public void produceSubscribeAction(String rabbitQueue, SubscribeActionDto subscribeActionDto) {
-        rabbitTemplate.convertAndSend(rabbitQueue, subscribeActionDto);
-    }
-
-    @Override
-    public void produceUserActionExOrPs(String rabbitQueue, UserActionExOrPsDto userActionExOrPsDto) {
-        rabbitTemplate.convertAndSend(rabbitQueue, userActionExOrPsDto);
-    }
-
-    @Override
     public void produceUserAction(String rabbitQueue, UserActionDto userActionDto) {
         rabbitTemplate.convertAndSend(rabbitQueue, userActionDto);
+    }
+
+    @Override
+    public void produceUserActionLimit(String rabbitQueue, UserActionLimitDto userActionLimitDto) {
+        rabbitTemplate.convertAndSend(rabbitQueue, userActionLimitDto);
     }
 
     @Override

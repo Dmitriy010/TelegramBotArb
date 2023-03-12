@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum PaymentSystem {
+public enum PaymentSystemEnum {
 
     TINKOFF("Tinkoff"),
     ROSBANK("SberBank"),

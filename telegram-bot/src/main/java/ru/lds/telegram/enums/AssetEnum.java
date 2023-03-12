@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum Asset {
+public enum AssetEnum {
     USDT,
     BTC,
     ETH

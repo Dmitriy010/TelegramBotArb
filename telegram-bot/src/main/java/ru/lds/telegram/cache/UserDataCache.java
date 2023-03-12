@@ -3,7 +3,7 @@ package ru.lds.telegram.cache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.lds.telegram.dto.OrderDto;
-import ru.lds.telegram.enums.BotState;
+import ru.lds.telegram.enums.BotStateEnum;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,36 +11,36 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class UserDataCache implements DataCache {
-    private final Map<Long, BotState> usersBotStates = new HashMap<>();
+    private final Map<Long, BotStateEnum> usersBotStates = new HashMap<>();
     private final Map<Long, OrderDto> usersMessages = new HashMap<>();
 
     @Override
-    public void setUserCurrentBotState(long userId, BotState botState) {
-        usersBotStates.put(userId, botState);
+    public void setUserCurrentBotState(long userId, BotStateEnum botStateEnum) {
+        usersBotStates.put(userId, botStateEnum);
     }
 
     @Override
-    public void setCurrentUserMessage(long userId, OrderDto orderDto) {
+    public void setCurrentOrderDtoByUserId(long userId, OrderDto orderDto) {
         usersMessages.put(userId, orderDto);
     }
 
     @Override
-    public OrderDto getCurrentUserMessage(long userId) {
+    public OrderDto getCurrentOrderDtoByUserId(long userId) {
         return usersMessages.get(userId);
     }
 
     @Override
-    public void deleteUserMessage(long userId) {
+    public void deleteOrderDtoByUserId(long userId) {
         usersMessages.remove(userId);
     }
 
     @Override
-    public BotState getUserCurrentBotState(long userId) {
-        BotState botState = usersBotStates.get(userId);
-        if (botState == null) {
-            botState = BotState.START;
+    public BotStateEnum getUserCurrentBotState(long userId) {
+        BotStateEnum botStateEnum = usersBotStates.get(userId);
+        if (botStateEnum == null) {
+            botStateEnum = BotStateEnum.START;
         }
-        return botState;
+        return botStateEnum;
     }
 }
 

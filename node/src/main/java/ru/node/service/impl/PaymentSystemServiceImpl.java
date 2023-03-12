@@ -19,10 +19,6 @@ public class PaymentSystemServiceImpl implements PaymentSystemService {
     @Override
     public List<PaymentSystem> findAll() {
         var paymentSystemList = paymentSystemRepository.findAll();
-        return paymentSystemList.stream().sorted(Comparator.comparing(PaymentSystem::getId)).collect(Collectors.toList());    }
-
-    @Override
-    public List<PaymentSystem> findAllByIds(List<Long> listIds) {
-        return paymentSystemRepository.findAllByIds(listIds);
+        return paymentSystemList.stream().sorted(Comparator.comparing(PaymentSystem::getId)).collect(Collectors.toList());
     }
 }

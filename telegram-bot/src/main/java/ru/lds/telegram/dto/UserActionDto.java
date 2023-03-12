@@ -13,5 +13,5 @@ public class UserActionDto {
 
     private String action;
     private Long userId;
-    private Long limit;
+    private Long id;
 }

@@ -28,3 +28,6 @@ management:
     distribution:
       percentiles-histogram:
         "[http.server.requests]": true
+orders:
+  count: 15
+  percent: 90.0

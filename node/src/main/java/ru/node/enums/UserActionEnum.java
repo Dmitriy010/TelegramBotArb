@@ -11,8 +11,11 @@ import java.util.Map;
 @Getter
 public enum UserActionEnum {
 
-    FIND_ALL_LIMITS("findAllLimits"),
-    UPDATE_LIMITS("updateLimits");
+    UPDATE("update"),
+    FIND_ALL("findAll"),
+    DELETE("delete"),
+    ADD("add"),
+    DELETE_ALL("deleteAll");
 
     private final String name;
 

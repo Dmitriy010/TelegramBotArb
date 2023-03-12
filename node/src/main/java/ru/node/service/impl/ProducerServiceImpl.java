@@ -12,32 +12,32 @@ public class ProducerServiceImpl implements ProducerService {
     private final RabbitTemplate rabbitTemplate;
 
     @Override
-    public void producerAnswer(SendMessage sendMessage) {
-        rabbitTemplate.convertAndSend("answer_order_info_message", sendMessage);
+    public void producerAnswerOrderInfo(SendMessage sendMessage) {
+        rabbitTemplate.convertAndSend("answer_order_info", sendMessage);
     }
 
     @Override
     public void producerAnswerSubscribe(SendMessage sendMessage) {
-        rabbitTemplate.convertAndSend("answer_message_subscribe", sendMessage);
+        rabbitTemplate.convertAndSend("answer_subscribe", sendMessage);
     }
 
     @Override
-    public void producerAnswerActionSubscribe(SendMessage sendMessage) {
-        rabbitTemplate.convertAndSend("answer_action_subscribe", sendMessage);
+    public void producerAnswerCreateSubscribe(SendMessage sendMessage) {
+        rabbitTemplate.convertAndSend("answer_create_subscribe", sendMessage);
     }
 
     @Override
-    public void producerAnswerActionUserExchange(SendMessage sendMessage) {
-        rabbitTemplate.convertAndSend("answer_action_user_exchange", sendMessage);
+    public void producerAnswerExchange(SendMessage sendMessage) {
+        rabbitTemplate.convertAndSend("answer_exchange", sendMessage);
     }
 
     @Override
-    public void producerAnswerActionUserPaymentSystem(SendMessage sendMessage) {
-        rabbitTemplate.convertAndSend("answer_action_user_payment_system", sendMessage);
+    public void producerAnswerPaymentSystem(SendMessage sendMessage) {
+        rabbitTemplate.convertAndSend("answer_payment_system", sendMessage);
     }
 
     @Override
-    public void producerAnswerActionUser(SendMessage sendMessage) {
-        rabbitTemplate.convertAndSend("answer_action_user", sendMessage);
+    public void producerAnswerLimit(SendMessage sendMessage) {
+        rabbitTemplate.convertAndSend("answer_limit", sendMessage);
     }
 }

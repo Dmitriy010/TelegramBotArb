@@ -1,16 +1,16 @@
 package ru.lds.telegram.cache;
 
 import ru.lds.telegram.dto.OrderDto;
-import ru.lds.telegram.enums.BotState;
+import ru.lds.telegram.enums.BotStateEnum;
 
 public interface DataCache {
-    void setUserCurrentBotState(long userId, BotState botState);
+    void setUserCurrentBotState(long userId, BotStateEnum botStateEnum);
 
-    void setCurrentUserMessage(long userId, OrderDto orderDto);
+    void setCurrentOrderDtoByUserId(long userId, OrderDto orderDto);
 
-    OrderDto getCurrentUserMessage(long userId);
+    OrderDto getCurrentOrderDtoByUserId(long userId);
 
-    void deleteUserMessage(long userId);
+    void deleteOrderDtoByUserId(long userId);
 
-    BotState getUserCurrentBotState(long userId);
+    BotStateEnum getUserCurrentBotState(long userId);
 }

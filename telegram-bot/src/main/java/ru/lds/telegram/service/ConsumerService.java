@@ -5,14 +5,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 public interface ConsumerService {
 
     void consumeOrderInfo(SendMessage sendMessage);
-
     void consumeSubscribe(SendMessage sendMessage);
-
-    void consumeSubscribeAction(SendMessage sendMessage);
-
-    void consumeUserActionExchange(SendMessage sendMessage);
-
-    void consumeUserAction(SendMessage sendMessage);
-
-    void consumeUserActionPaymentSystem(SendMessage sendMessage);
+    void consumeCreateSubscribe(SendMessage sendMessage);
+    void consumeRegisterUser(SendMessage sendMessage);
+    void consumeExchange(SendMessage sendMessage);
+    void consumeLimit(SendMessage sendMessage);
+    void consumePaymentSystem(SendMessage sendMessage);
 }

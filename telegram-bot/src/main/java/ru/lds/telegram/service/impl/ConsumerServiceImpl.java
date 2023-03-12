@@ -16,38 +16,44 @@ public class ConsumerServiceImpl implements ConsumerService {
     private final UpdateProcessor updateProcessor;
 
     @Override
-    @RabbitListener(queues = "answer_order_info_message")
+    @RabbitListener(queues = "answer_order_info")
     public void consumeOrderInfo(SendMessage sendMessage) {
         updateProcessor.setView(sendMessage);
     }
 
     @Override
-    @RabbitListener(queues = "answer_message_subscribe")
+    @RabbitListener(queues = "answer_subscribe")
     public void consumeSubscribe(SendMessage sendMessage) {
         updateProcessor.setView(sendMessage);
     }
 
     @Override
-    @RabbitListener(queues = "answer_action_subscribe")
-    public void consumeSubscribeAction(SendMessage sendMessage) {
+    @RabbitListener(queues = "answer_create_subscribe")
+    public void consumeCreateSubscribe(SendMessage sendMessage) {
         updateProcessor.setView(sendMessage);
     }
 
     @Override
-    @RabbitListener(queues = "answer_action_user_exchange")
-    public void consumeUserActionExchange(SendMessage sendMessage) {
+    @RabbitListener(queues = "answer_exchange")
+    public void consumeExchange(SendMessage sendMessage) {
         updateProcessor.setView(sendMessage);
     }
 
     @Override
-    @RabbitListener(queues = "answer_action_user")
-    public void consumeUserAction(SendMessage sendMessage) {
+    @RabbitListener(queues = "answer_limit")
+    public void consumeLimit(SendMessage sendMessage) {
         updateProcessor.setView(sendMessage);
     }
 
     @Override
-    @RabbitListener(queues = "answer_action_user_payment_system")
-    public void consumeUserActionPaymentSystem(SendMessage sendMessage) {
+    @RabbitListener(queues = "answer_register_user")
+    public void consumeRegisterUser(SendMessage sendMessage) {
+        updateProcessor.setView(sendMessage);
+    }
+
+    @Override
+    @RabbitListener(queues = "answer_payment_system")
+    public void consumePaymentSystem(SendMessage sendMessage) {
         updateProcessor.setView(sendMessage);
     }
 }

@@ -3,6 +3,7 @@ package ru.node.service.impl;
 import io.micrometer.core.annotation.Timed;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -30,8 +31,10 @@ import static ru.node.constants.Constants.FIAT_RUB;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private static final int ORDER_COUNT = 15;
-    private static final double ORDER_PERCENT = 90.0;
+    @Value("${orders.count}")
+    private int orderCount;
+    @Value("${orders.percent}")
+    private double orderPercent;
     private final BinanceServiceClient binanceServiceClient;
     private final HuobiServiceClient huobiServiceClient;
     private final OrderMapper orderMapper;
@@ -47,8 +50,8 @@ public class OrderServiceImpl implements OrderService {
                 !responseBody.getData().isEmpty()) {
 
             var binanceData = responseBody.getData().stream()
-                    .filter(data -> data.getAdvertiser().getMonthOrderCount() > ORDER_COUNT &&
-                            data.getAdvertiser().getMonthFinishRate() * 100 > ORDER_PERCENT)
+                    .filter(data -> data.getAdvertiser().getMonthOrderCount() > orderCount &&
+                            data.getAdvertiser().getMonthFinishRate() * 100 > orderPercent)
                     .toList();
 
             if (!binanceData.isEmpty()) {
@@ -101,8 +104,8 @@ public class OrderServiceImpl implements OrderService {
                 !responseBody.getData().isEmpty()) {
 
             var huobiData = responseBody.getData().stream()
-                    .filter(data -> data.getTradeMonthTimes() > ORDER_COUNT &&
-                            Double.parseDouble(data.getOrderCompleteRate()) > ORDER_PERCENT)
+                    .filter(data -> data.getTradeMonthTimes() > orderCount &&
+                            Double.parseDouble(data.getOrderCompleteRate()) > orderPercent)
                     .toList();
 
             if (!huobiData.isEmpty()) {

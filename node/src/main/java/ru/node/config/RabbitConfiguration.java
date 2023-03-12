@@ -14,57 +14,57 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    public Queue textMessageQueue() {
-        return new Queue("text_message_order_info");
+    public Queue orderInfoQueue() {
+        return new Queue("order_info");
     }
     @Bean
-    public Queue textAnswerMessageQueue() {return new Queue("answer_order_info_message");}
+    public Queue answerOrderInfoQueue() {return new Queue("answer_order_info");}
     @Bean
-    public Queue textSubscribeMessageQueue() {
-        return new Queue("text_message_subscribe");
+    public Queue subscribeQueue() {
+        return new Queue("subscribe");
     }
     @Bean
-    public Queue textAnswerSubscribeMessageQueue() {
-        return new Queue("answer_message_subscribe");
+    public Queue answerSubscribeQueue() {
+        return new Queue("answer_subscribe");
     }
     @Bean
-    public Queue textSubscribeActionQueue() {
-        return new Queue("text_action_subscribe");
+    public Queue createSubscribeQueue() {
+        return new Queue("create_subscribe");
     }
     @Bean
-    public Queue textAnswerSubscribeActionQueue() {
-        return new Queue("answer_action_subscribe");
+    public Queue answerCreateSubscribeQueue() {
+        return new Queue("answer_create_subscribe");
     }
     @Bean
-    public Queue textUserActionExchangeQueue() {
-        return new Queue("text_action_user_exchange");
+    public Queue exchangeQueue() {
+        return new Queue("exchange");
     }
     @Bean
-    public Queue textAnswerUserActionExchangeQueue() {
-        return new Queue("answer_action_user_exchange");
+    public Queue answerExchangeQueue() {
+        return new Queue("answer_exchange");
     }
     @Bean
-    public Queue textUserActionPaymentSystemQueue() {
-        return new Queue("text_action_user_payment_system");
+    public Queue paymentSystemQueue() {
+        return new Queue("payment_system");
     }
     @Bean
-    public Queue textAnswerUserActionPaymentSystemQueue() {
-        return new Queue("answer_action_user_payment_system");
+    public Queue answerPaymentSystemQueue() {
+        return new Queue("answer_payment_system");
     }
     @Bean
-    public Queue textUserRegisterQueue() {
-        return new Queue("text_register_user");
+    public Queue limitQueue() {
+        return new Queue("limit");
     }
     @Bean
-    public Queue textAnswerUserRegisterQueue() {
+    public Queue answerLimitQueue() {
+        return new Queue("answer_limit");
+    }
+    @Bean
+    public Queue registerUserQueue() {
+        return new Queue("register_user");
+    }
+    @Bean
+    public Queue answerRegisterUserQueue() {
         return new Queue("answer_register_user");
-    }
-    @Bean
-    public Queue textActionUserQueue() {
-        return new Queue("text_action_user");
-    }
-    @Bean
-    public Queue textAnswerUserActionQueue() {
-        return new Queue("answer_action_user");
     }
 }

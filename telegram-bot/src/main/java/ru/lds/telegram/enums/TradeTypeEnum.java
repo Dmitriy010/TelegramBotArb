@@ -5,11 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum SubscribeAction {
+public enum TradeTypeEnum {
 
-    FIND_ALL("findAll"),
-    DELETE("delete"),
-    DELETE_ALL("deleteAll");
+    BUY("Продать"),
+    SELL("Купить");
 
     private final String name;
 }

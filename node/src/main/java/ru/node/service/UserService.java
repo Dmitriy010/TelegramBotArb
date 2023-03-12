@@ -7,9 +7,7 @@ import ru.node.model.User;
 public interface UserService {
 
     User create(UserRegisterDto userRegisterDto);
-
     @Nullable
     User findByUserId(Long userId);
-
     User findByUserName(String username);
 }

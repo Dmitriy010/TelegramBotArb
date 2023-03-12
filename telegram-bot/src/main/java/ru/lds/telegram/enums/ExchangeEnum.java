@@ -9,7 +9,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Getter
-public enum Exchange {
+public enum ExchangeEnum {
 
     BINANCE("Binance"),
     HUOBI("Huobi"),
@@ -18,14 +18,14 @@ public enum Exchange {
 
     private final String name;
 
-    private static final Map<String, Exchange> mapExchange = new HashMap<>();
+    private static final Map<String, ExchangeEnum> mapExchange = new HashMap<>();
 
     static {
-        Arrays.stream(Exchange.values())
+        Arrays.stream(ExchangeEnum.values())
                 .forEach(exchange -> mapExchange.put(exchange.getName(), exchange));
     }
 
-    public static Exchange getByName(String name){
+    public static ExchangeEnum getByName(String name){
         return mapExchange.get(name);
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.node.clients.request.binance.BinanceBody;
 import ru.node.enums.AssetEnum;
-import ru.node.enums.ExchangeEnum;
 import ru.node.enums.PaymentSystemEnum;
 import ru.node.enums.TradeTypeEnum;
 import ru.node.service.OrderService;
@@ -81,23 +80,19 @@ public class BinanceOrdersScheduler {
 
     private void startScheduled(PaymentSystemEnum payMethod, AssetEnum assetEnum, TradeTypeEnum tradeTypeEnum) {
         CompletableFuture.runAsync(() -> orderService.scheduledOrderBinance(new BinanceBody(
-                Boolean.FALSE,
-                1,
-                20,
-                List.of(payMethod.getNameBinance()),
-                Collections.emptyList(),
-                null,
-                Integer.parseInt(BALANCE),
-                assetEnum.getNameBinance(),
-                FIAT_RUB,
-                tradeTypeEnum.getNameBinance()))).exceptionally((e) -> {
-            log.error("!-----" +
-                    ExchangeEnum.BINANCE.getName() + " -> " +
-                    payMethod.getNameBinance() + " -> " +
-                    assetEnum.getNameBinance() + " -> " +
-                    tradeTypeEnum.getNameBinance() + "-----!");
-            log.error(e.getMessage(), e);
-            return null;
-        });
+                        Boolean.FALSE,
+                        1,
+                        20,
+                        List.of(payMethod.getNameBinance()),
+                        Collections.emptyList(),
+                        null,
+                        Integer.parseInt(BALANCE),
+                        assetEnum.getNameBinance(),
+                        FIAT_RUB,
+                        tradeTypeEnum.getNameBinance())))
+                .exceptionally((e) -> {
+                    log.error(e.getMessage(), e);
+                    return null;
+                });
     }
 }

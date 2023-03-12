@@ -8,10 +8,7 @@ import java.util.List;
 public interface ExchangeUserService {
 
     void createByUserIdAndExchangeId(Long userId, Long exchangeId);
-
     void deleteByUserAndExchangeId(User user, Long exchangeId);
-
     void deleteAllByUser(User user);
-
     List<ExchangeUser> findAllByUserId(Long userId);
 }

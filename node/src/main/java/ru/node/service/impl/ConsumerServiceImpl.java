@@ -8,16 +8,12 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.node.bot.TelegramButton;
 import ru.node.dto.OrderDto;
-import ru.node.dto.SubscribeActionDto;
+import ru.node.dto.UserActionLimitDto;
 import ru.node.dto.UserActionDto;
-import ru.node.dto.UserActionExOrPsDto;
 import ru.node.dto.UserRegisterDto;
 import ru.node.enums.ExchangeEnum;
 import ru.node.enums.PaymentSystemEnum;
-import ru.node.enums.SubscribeActionEnum;
 import ru.node.enums.UserActionEnum;
-import ru.node.enums.UserActionExEnum;
-import ru.node.enums.UserActionPSEnum;
 import ru.node.model.Exchange;
 import ru.node.model.ExchangeUser;
 import ru.node.model.Limit;
@@ -62,8 +58,8 @@ public class ConsumerServiceImpl implements ConsumerService {
     private final TelegramButton telegramButton;
 
     @Override
-    @RabbitListener(queues = "text_message_order_info")
-    public void consumeTextMessageOrderInfo(OrderDto orderDto) {
+    @RabbitListener(queues = "order_info")
+    public void consumeOrderInfo(OrderDto orderDto) {
         List<String> exchanges = new ArrayList<>();
         List<String> paymentSystems = new ArrayList<>();
 
@@ -97,15 +93,15 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         if (!orderList.isEmpty()) {
             orderList.forEach(order ->
-                    producerService.producerAnswerSubscribe(new SendMessage(orderDto.getUserId().toString(), MessageUtils.getTextOrderInfo(order))));
+                    producerService.producerAnswerOrderInfo(new SendMessage(orderDto.getUserId().toString(), MessageUtils.getTextOrderInfo(order))));
         } else {
-            producerService.producerAnswerSubscribe(new SendMessage(orderDto.getUserId().toString(), "Нет данных"));
+            producerService.producerAnswerOrderInfo(new SendMessage(orderDto.getUserId().toString(), "Нет данных"));
         }
     }
 
     @Override
-    @RabbitListener(queues = "text_message_subscribe")
-    public void consumeTextMessageSubscribe(OrderDto orderDto) {
+    @RabbitListener(queues = "create_subscribe")
+    public void consumeCreateSubscribe(OrderDto orderDto) {
         if (ExchangeEnum.MY_EXCHANGE.getName().equals(orderDto.getExchange())) {
             var exchangeList = exchangeUserService.findAllByUserId(orderDto.getUserId()).stream()
                     .map(ExchangeUser::getExchange)
@@ -133,106 +129,105 @@ public class ConsumerServiceImpl implements ConsumerService {
 
         var orderSubscribe = orderSubscribeService.create(orderDto, limit);
         var sendMessage = new SendMessage(orderDto.getUserId().toString(), MessageUtils.getTextOrderSubscribe(orderSubscribe));
-        producerService.producerAnswer(sendMessage);
+        producerService.producerAnswerCreateSubscribe(sendMessage);
     }
 
-    @Override
-    @RabbitListener(queues = "text_action_subscribe")
-    public void consumeTextActionSubscribe(SubscribeActionDto subscribeActionDto) {
-        if (SubscribeActionEnum.FIND_ALL.getName().equals(subscribeActionDto.getAction())) {
+    @RabbitListener(queues = "subscribe")
+    public void consumeSubscribe(UserActionDto subscribeActionDto) {
+        if (UserActionEnum.FIND_ALL.getName().equals(subscribeActionDto.getAction())) {
             var orderSubscribes = orderSubscribeService.findAllByUserId(subscribeActionDto.getUserId());
             if (orderSubscribes.isEmpty()) {
-                producerService.producerAnswerActionSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
+                producerService.producerAnswerSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
                         String.format("%s Мои подписки %s\n Подписок нет", EmojiParser.parseToUnicode("⏰⏰⏰"), EmojiParser.parseToUnicode("⏰⏰⏰"))));
             } else {
-                producerService.producerAnswerActionSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
+                producerService.producerAnswerSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
                         String.format("%s Мои подписки %s", EmojiParser.parseToUnicode("⏰⏰⏰"), EmojiParser.parseToUnicode("⏰⏰⏰"))));
                 orderSubscribes.forEach(orderSubscribe ->
                 {
                     var sendMessage = new SendMessage(subscribeActionDto.getUserId().toString(),
                             MessageUtils.getTextOrderSubscribeForUser(orderSubscribe));
                     sendMessage.setReplyMarkup(telegramButton.getKeyBoardDeleteSubscribe(orderSubscribe.getId()));
-                    producerService.producerAnswerActionSubscribe(sendMessage);
+                    producerService.producerAnswerSubscribe(sendMessage);
                 });
             }
-        } else if (SubscribeActionEnum.DELETE.getName().equals(subscribeActionDto.getAction())) {
+        } else if (UserActionEnum.DELETE.getName().equals(subscribeActionDto.getAction())) {
             var orderSubscribes = orderSubscribeService.findAllByUserId(subscribeActionDto.getUserId());
             if (orderSubscribes.isEmpty()) {
-                producerService.producerAnswerActionSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
+                producerService.producerAnswerSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
                         String.format("%s Мои подписки %s\n Подписок нет", EmojiParser.parseToUnicode("⏰⏰⏰"), EmojiParser.parseToUnicode("⏰⏰⏰"))));
             } else {
-                orderSubscribeService.deleteById(subscribeActionDto.getSubscribeId());
+                orderSubscribeService.deleteById(subscribeActionDto.getId());
                 var orderSubscribesNew = orderSubscribeService.findAllByUserId(subscribeActionDto.getUserId());
                 if (orderSubscribesNew.isEmpty()) {
-                    producerService.producerAnswerActionSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
+                    producerService.producerAnswerSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
                             String.format("Подписка успешно удалена.\n%s Мои подписки %s\n Подписок нет.", EmojiParser.parseToUnicode("⏰⏰⏰"), EmojiParser.parseToUnicode("⏰⏰⏰"))));
                 } else {
-                    producerService.producerAnswerActionSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
+                    producerService.producerAnswerSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
                             String.format("Подписка успешно удалена.\n%s Мои подписки %s", EmojiParser.parseToUnicode("⏰⏰⏰"), EmojiParser.parseToUnicode("⏰⏰⏰"))));
                     orderSubscribesNew.forEach(orderSubscribe -> {
                         var sendMessage = new SendMessage(subscribeActionDto.getUserId().toString(),
                                 MessageUtils.getTextOrderSubscribeForUser(orderSubscribe));
                         sendMessage.setReplyMarkup(telegramButton.getKeyBoardDeleteSubscribe(orderSubscribe.getId()));
-                        producerService.producerAnswerActionSubscribe(sendMessage);
+                        producerService.producerAnswerSubscribe(sendMessage);
                     });
                 }
             }
-        } else if (SubscribeActionEnum.DELETE_ALL.getName().equals(subscribeActionDto.getAction())) {
+        } else if (UserActionEnum.DELETE_ALL.getName().equals(subscribeActionDto.getAction())) {
             orderSubscribeService.deleteAllByUserId(subscribeActionDto.getUserId());
-            producerService.producerAnswerActionSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
+            producerService.producerAnswerSubscribe(new SendMessage(subscribeActionDto.getUserId().toString(),
                     String.format("%s Все подписки удалены %s", EmojiParser.parseToUnicode("⏰⏰⏰"), EmojiParser.parseToUnicode("⏰⏰⏰"))));
         }
     }
 
     @Override
-    @RabbitListener(queues = "text_action_user_exchange")
-    public void consumeTextActionUserExchange(UserActionExOrPsDto userActionExOrPsDto) {
-        var user = userService.findByUserId(userActionExOrPsDto.getUserId());
+    @RabbitListener(queues = "exchange")
+    public void consumeExchange(UserActionDto userActionDto) {
+        var user = userService.findByUserId(userActionDto.getUserId());
         if (Objects.nonNull(user)) {
-            switch (UserActionExEnum.getByName(userActionExOrPsDto.getAction())) {
+            switch (UserActionEnum.getByName(userActionDto.getAction())) {
                 case ADD -> {
-                    exchangeUserService.createByUserIdAndExchangeId(user.getId(), userActionExOrPsDto.getId());
-                    getUserExchanges(userActionExOrPsDto);
+                    exchangeUserService.createByUserIdAndExchangeId(user.getId(), userActionDto.getId());
+                    getUserExchanges(userActionDto);
                 }
                 case DELETE -> {
-                    exchangeUserService.deleteByUserAndExchangeId(user, userActionExOrPsDto.getId());
-                    getUserExchanges(userActionExOrPsDto);
+                    exchangeUserService.deleteByUserAndExchangeId(user, userActionDto.getId());
+                    getUserExchanges(userActionDto);
                 }
                 case DELETE_ALL -> {
                     exchangeUserService.deleteAllByUser(user);
-                    getUserExchanges(userActionExOrPsDto);
+                    getUserExchanges(userActionDto);
                 }
-                case FIND_ALL -> getUserExchanges(userActionExOrPsDto);
+                case FIND_ALL -> getUserExchanges(userActionDto);
             }
         }
     }
 
     @Override
-    @RabbitListener(queues = "text_action_user_payment_system")
-    public void consumeTextActionUserPaymentSystem(UserActionExOrPsDto userActionExOrPsDto) {
-        var user = userService.findByUserId(userActionExOrPsDto.getUserId());
+    @RabbitListener(queues = "payment_system")
+    public void consumePaymentSystem(UserActionDto userActionDto) {
+        var user = userService.findByUserId(userActionDto.getUserId());
         if (Objects.nonNull(user)) {
-            switch (UserActionPSEnum.getByName(userActionExOrPsDto.getAction())) {
+            switch (UserActionEnum.getByName(userActionDto.getAction())) {
                 case ADD -> {
-                    paymentSystemUserService.createByUserIdAndPaymentSystemId(user.getId(), userActionExOrPsDto.getId());
-                    getUserPaymentSystem(userActionExOrPsDto);
+                    paymentSystemUserService.createByUserIdAndPaymentSystemId(user.getId(), userActionDto.getId());
+                    getUserPaymentSystem(userActionDto);
                 }
                 case DELETE -> {
-                    paymentSystemUserService.deleteByUserAndPaymentSystemId(user, userActionExOrPsDto.getId());
-                    getUserPaymentSystem(userActionExOrPsDto);
+                    paymentSystemUserService.deleteByUserAndPaymentSystemId(user, userActionDto.getId());
+                    getUserPaymentSystem(userActionDto);
                 }
                 case DELETE_ALL -> {
                     paymentSystemUserService.deleteAllByUser(user);
-                    getUserPaymentSystem(userActionExOrPsDto);
+                    getUserPaymentSystem(userActionDto);
                 }
-                case FIND_ALL -> getUserPaymentSystem(userActionExOrPsDto);
+                case FIND_ALL -> getUserPaymentSystem(userActionDto);
             }
         }
     }
 
     @Override
-    @RabbitListener(queues = "text_register_user")
-    public void consumeTextRegisterUser(UserRegisterDto userRegisterDto) {
+    @RabbitListener(queues = "register_user")
+    public void consumeRegisterUser(UserRegisterDto userRegisterDto) {
         var user = userService.findByUserName(userRegisterDto.getUserName());
         if (Objects.isNull(user)) {
             var newUser = userService.create(userRegisterDto);
@@ -242,52 +237,52 @@ public class ConsumerServiceImpl implements ConsumerService {
     }
 
     @Override
-    @RabbitListener(queues = "text_action_user")
-    public void consumeTextActionUser(UserActionDto userActionDto) {
-        switch (UserActionEnum.getByName(userActionDto.getAction())) {
-            case FIND_ALL_LIMITS -> getUserLimit(userActionDto);
-            case UPDATE_LIMITS -> {
-                var limitUser = limitUserService.findByUserId(userActionDto.getUserId());
-                limitUser.setLimit(new Limit(userActionDto.getLimit()));
+    @RabbitListener(queues = "limit")
+    public void consumeLimit(UserActionLimitDto userActionLimitDto) {
+        switch (UserActionEnum.getByName(userActionLimitDto.getAction())) {
+            case FIND_ALL -> getUserLimit(userActionLimitDto);
+            case UPDATE -> {
+                var limitUser = limitUserService.findByUserId(userActionLimitDto.getUserId());
+                limitUser.setLimit(new Limit(userActionLimitDto.getLimit()));
                 limitUserService.update(limitUser);
-                getUserLimit(userActionDto);
+                getUserLimit(userActionLimitDto);
             }
         }
     }
 
-    private void getUserLimit(UserActionDto userActionDto) {
+    private void getUserLimit(UserActionLimitDto userActionLimitDto) {
         var limitList = limitService.findAll();
-        var limitUser = List.of(limitUserService.findByUserId(userActionDto.getUserId()));
+        var limitUser = List.of(limitUserService.findByUserId(userActionLimitDto.getUserId()));
         var groupLimit = Stream.concat(limitList.stream(), limitUser.stream().map(LimitUser::getLimit))
                 .collect(Collectors.groupingBy(Limit::getId,
                         Collectors.mapping(Limit::getVolume, Collectors.toList())));
 
-        var message = new SendMessage(userActionDto.getUserId().toString(), "Выберите лимит");
+        var message = new SendMessage(userActionLimitDto.getUserId().toString(), "Выберите лимит");
         message.setReplyMarkup(telegramButton.getKeyBoardLimit(groupLimit));
-        producerService.producerAnswerActionUser(message);
+        producerService.producerAnswerLimit(message);
     }
 
-    private void getUserExchanges(UserActionExOrPsDto userActionExOrPsDto) {
+    private void getUserExchanges(UserActionDto userActionDto) {
         var exchangeList = exchangeService.findAll();
-        var exchangeUserList = exchangeUserService.findAllByUserId(userActionExOrPsDto.getUserId());
+        var exchangeUserList = exchangeUserService.findAllByUserId(userActionDto.getUserId());
         var groupExchange = Stream.concat(exchangeList.stream(), exchangeUserList.stream().map(ExchangeUser::getExchange))
                 .collect(Collectors.groupingBy(Exchange::getId,
                         Collectors.mapping(Exchange::getName, Collectors.toList())));
 
-        var message = new SendMessage(userActionExOrPsDto.getUserId().toString(), "Выберите биржи");
-        message.setReplyMarkup(telegramButton.getKeyBoardUpdate(groupExchange));
-        producerService.producerAnswerActionUserExchange(message);
+        var message = new SendMessage(userActionDto.getUserId().toString(), "Выберите биржи");
+        message.setReplyMarkup(telegramButton.getKeyBoardExchangeOrPaymentSystem(groupExchange));
+        producerService.producerAnswerExchange(message);
     }
 
-    private void getUserPaymentSystem(UserActionExOrPsDto userActionExOrPsDto) {
+    private void getUserPaymentSystem(UserActionDto userActionDto) {
         var paymentSystemList = paymentSystemService.findAll();
-        var paymentSystemUserList = paymentSystemUserService.findAllByUserId(userActionExOrPsDto.getUserId());
+        var paymentSystemUserList = paymentSystemUserService.findAllByUserId(userActionDto.getUserId());
         var groupPaymentSystem = Stream.concat(paymentSystemList.stream(), paymentSystemUserList.stream().map(PaymentSystemUser::getPaymentSystem))
                 .collect(Collectors.groupingBy(PaymentSystem::getId,
                         Collectors.mapping(PaymentSystem::getName, Collectors.toList())));
 
-        var message = new SendMessage(userActionExOrPsDto.getUserId().toString(), "Выберите платежные системамы");
-        message.setReplyMarkup(telegramButton.getKeyBoardUpdate(groupPaymentSystem));
-        producerService.producerAnswerActionUserPaymentSystem(message);
+        var message = new SendMessage(userActionDto.getUserId().toString(), "Выберите платежные системамы");
+        message.setReplyMarkup(telegramButton.getKeyBoardExchangeOrPaymentSystem(groupPaymentSystem));
+        producerService.producerAnswerPaymentSystem(message);
     }
 }

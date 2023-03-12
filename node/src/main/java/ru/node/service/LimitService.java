@@ -7,6 +7,5 @@ import java.util.List;
 public interface LimitService {
 
     List<Limit> findAll();
-
    Limit findByLimit(Long limit);
 }
